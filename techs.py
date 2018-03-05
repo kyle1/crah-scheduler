@@ -10,12 +10,14 @@ fri_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM', '8-5:30 SP']
 sat_shifts = ['7:30-12', '8-12']
 
 # Read employee names from techs.txt
-with open("techs.txt") as f:
-    techs = f.readlines()
-techs = [x.strip() for x in techs]
+#with open("techs.txt") as f:
+#    techs = f.readlines()
+#techs = [x.strip() for x in techs]
+techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
 
 workbook = xlsxwriter.Workbook('tech_schedule.xlsx')
 worksheet = workbook.add_worksheet('Techs')
+worksheet.set_landscape()
 border = workbook.add_format({'border': 1})
 fill = workbook.add_format({'bg_color': 'silver', 'border': 1})
 
@@ -77,7 +79,7 @@ def week(num, sat_worker, sat_worker2):
 
 
 # Set up schedule template
-def template(month_str, day_str, total_weeks):
+def template(month_str, day_str, total_weeks, msg):
     worksheet.set_column('B:G', 12)
     worksheet.set_column('H:H', 5.5)
     border = workbook.add_format({'border': 1})
@@ -85,6 +87,12 @@ def template(month_str, day_str, total_weeks):
     column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursdays', 'Friday', 'Saturday', 'Hours']
     for x in range(7):
         worksheet.write(0, x + 1, column_headers[x], border)
+
+    # Get rid of leading zeros
+    month_str = int(month_str)
+    month_str = str(month_str)
+    day_str = int(day_str)
+    day_str = str(day_str)
 
     for i in range(total_weeks):
         # Write calendar dates to appropriate cells
@@ -121,4 +129,11 @@ def template(month_str, day_str, total_weeks):
                     day += 1
             month_str = str(month)
             day_str = str(day)
+
+    merge_format = workbook.add_format({
+        'bold': 1,
+        'align': 'center',
+        'valign': 'vcenter',
+        'font_size': 16})
+    worksheet.merge_range('A23:H23', msg, merge_format)
     workbook.close()

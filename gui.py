@@ -2,12 +2,9 @@ import tkinter as tk
 from tkinter import *
 from tkinter import font as tkfont
 from tkinter import ttk
+from PIL import ImageTk
 # from tkcalendar import Calendar, DateEntry
 from techs import *
-
-
-# only needed for mac?
-from PIL import ImageTk
 
 
 class ScheduleBuilder(tk.Tk):
@@ -57,11 +54,11 @@ class StartPage(tk.Frame):
 
         f = tkfont.Font(family='Calibri', size=10, weight='bold')
         tk.Button(self, text="ACTs", font=f, command=lambda: controller.show_frame("ActMain"),
-            background='DodgerBlue2', width=20).pack()
+            background='CadetBlue3', width=20).pack()
         tk.Button(self, text="Receptionists", font=f, command=lambda: controller.show_frame("RecepMain"),
-            background='DodgerBlue2', width=20).pack()
+            background='CadetBlue3', width=20).pack()
         tk.Button(self, text="Vet Techs", font=f, command=lambda: controller.show_frame("TechMain"),
-            background='DodgerBlue2', width=20).pack()
+            background='CadetBlue3', width=20).pack()
 
 
 class ActMain(tk.Frame):
@@ -70,7 +67,7 @@ class ActMain(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="ACTs", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        tk.Button(self, text="Go Back", command=lambda: controller.show_frame("StartPage")).pack()
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
 
 class RecepMain(tk.Frame):
@@ -79,7 +76,7 @@ class RecepMain(tk.Frame):
         self.controller = controller
         label = tk.Label(self, text="Receptionists", font=controller.title_font)
         label.pack(side="top", fill="x", pady=10)
-        tk.Button(self, text="Go Back", command=lambda: controller.show_frame("StartPage")).pack()
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
 
 class TechMain(tk.Frame):
@@ -88,17 +85,17 @@ class TechMain(tk.Frame):
         self.controller = controller
 
         f = tkfont.Font(family='Calibri', size=14, weight='bold')
-        tk.Label(self, text="Vet Techs", font=f).pack(side="top", fill="x", pady=(10, 0))
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
 
-        tk.Label(self, text="Select the beginning date of the new schedule").pack(pady=(15, 70))
+        tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
+        sdate = Entry(self, width=12, justify='center')
+        sdate.pack(pady=(0, 20))
+        sdate.delete(0, END)
+        sdate.insert(0, "MM/DD")
 
-        def print_sel():
-            start_date = cal.selection_get()
-            print("Start date is {}".format(start_date))
 
         wks = StringVar(self)
         wks.set("4")  # initial value
-
         tk.Label(self, text="Total number of weeks to generate:").pack()
         OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
 
@@ -110,26 +107,39 @@ class TechMain(tk.Frame):
         s3t2 = StringVar(self)
         s4t1 = StringVar(self)
         s4t2 = StringVar(self)
+        s5t1 = StringVar(self)
+        s5t2 = StringVar(self)
         techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
         tk.Label(self, text="Select which techs to work on the following Saturdays:").pack(pady=20)
-        for x in range(4):
-            tk.Label(self, text=x+1).place(x=75, y=243+(30*x))
-        OptionMenu(self, s1t1, *techs).place(width=100, x=105, y=240)
-        OptionMenu(self, s1t2, *techs).place(width=100, x=205, y=240)
-        OptionMenu(self, s2t1, *techs).place(width=100, x=105, y=270)
-        OptionMenu(self, s2t2, *techs).place(width=100, x=205, y=270)
-        OptionMenu(self, s3t1, *techs).place(width=100, x=105, y=300)
-        OptionMenu(self, s3t2, *techs).place(width=100, x=205, y=300)
-        OptionMenu(self, s4t1, *techs).place(width=100, x=105, y=330)
-        OptionMenu(self, s4t2, *techs).place(width=100, x=205, y=330)
+        for x in range(5):
+            tk.Label(self, text=x+1).place(x=85, y=213+(30*x))
+        OptionMenu(self, s1t1, *techs).place(width=100, x=105, y=208)
+        OptionMenu(self, s1t2, *techs).place(width=100, x=205, y=208)
+        OptionMenu(self, s2t1, *techs).place(width=100, x=105, y=238)
+        OptionMenu(self, s2t2, *techs).place(width=100, x=205, y=238)
+        OptionMenu(self, s3t1, *techs).place(width=100, x=105, y=268)
+        OptionMenu(self, s3t2, *techs).place(width=100, x=205, y=268)
+        OptionMenu(self, s4t1, *techs).place(width=100, x=105, y=298)
+        OptionMenu(self, s4t2, *techs).place(width=100, x=205, y=298)
+        OptionMenu(self, s5t1, *techs).place(width=100, x=105, y=328)
+        OptionMenu(self, s5t2, *techs).place(width=100, x=205, y=328)
 
-        tk.Button(self, text='< Go Back', command=lambda: controller.show_frame('StartPage')).place(x=30, y=420)
+        tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
+        msg = Entry(self, width=30, justify='center')
+        msg.pack()
+        msg.delete(0, END)
+        msg.insert(0, '')
+
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
         # Really need to figure out a better way to pass the selected menu options...
-        tk.Button(self, text='Generate schedule',
-                command=lambda: test(s1t1.get(), s1t2.get(), s2t1.get(), s2t2.get(), s3t1.get(), s3t2.get(), s4t1.get(), s4t2.get(), wks.get())).place(x=220, y=420)
+        tk.Button(self, text='Generate', font=f, background='CadetBlue3',
+                command=lambda: test(sdate.get(), s1t1.get(), s1t2.get(), s2t1.get(), s2t2.get(), s3t1.get(), s3t2.get(), s4t1.get(), s4t2.get(), wks.get(), msg.get())).place(x=159, y=435)
 
-        def test(s1t1, s1t2, s2t1, s2t2, s3t1, s3t2, s4t1, s4t2, wks):
+        def test(sdate, s1t1, s1t2, s2t1, s2t2, s3t1, s3t2, s4t1, s4t2, wks, msg):
+            #print(msg)
+            month_str = sdate[:2]
+            day_str = sdate[3:]
             sat_techs = [[] for i in range(5)]
             sat_techs[0].append(s1t1)
             sat_techs[0].append(s1t2)
@@ -142,7 +152,7 @@ class TechMain(tk.Frame):
 
             for i in range(int(wks)):
                 week(i+1, sat_techs[i][0], sat_techs[i][1])
-            template('3', '3', int(wks))
+            template(month_str, day_str, int(wks), msg)
 
 # if __name__ == "__main__":
 sat1tech1 = ''
