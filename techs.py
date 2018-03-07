@@ -10,20 +10,21 @@ fri_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM', '8-5:30 SP']
 sat_shifts = ['7:30-12', '8-12']
 
 # Read employee names from techs.txt
-#with open("techs.txt") as f:
-#    techs = f.readlines()
-#techs = [x.strip() for x in techs]
+# with open("techs.txt") as f:
+#     techs = f.readlines()
+# techs = [x.strip() for x in techs]
 techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
 
 workbook = xlsxwriter.Workbook('tech_schedule.xlsx')
 worksheet = workbook.add_worksheet('Techs')
 worksheet.set_landscape()
-border = workbook.add_format({'border': 1})
-fill = workbook.add_format({'bg_color': 'silver', 'border': 1})
+worksheet.set_default_row(12)
+border = workbook.add_format({'font_size': 8, 'border': 1})
+fill = workbook.add_format({'font_size': 8, 'bg_color': 'silver', 'border': 1})
 
 
 # Generate full week
-def week(num, sat_worker, sat_worker2):
+def tech_week(num, sat_worker, sat_worker2):
     for x in range(4):
         if sat_worker == techs[x]:
             sat_worker = x+1
@@ -48,24 +49,33 @@ def week(num, sat_worker, sat_worker2):
     k = 0
     first_row = (num * 5) - 3
     for x in range(4):
+        # Vet tech names
         worksheet.write(first_row+x, 0, techs[x], border)
+
+        # Monday
         worksheet.write(first_row+x, 1, mon_shifts[x], border)
+
+        # Tuesday
         worksheet.write(first_row+x, 2, tue_shifts[x], border)
 
+        # Wednesday
         if x+1 != wed_off:
             worksheet.write(first_row+x, 3, wed_shifts[i], border)
             i += 1
         else:
             worksheet.write(first_row+x, 3, 'OFF', border)
 
+        # Thursday
         if x+1 != thu_off:
             worksheet.write(first_row+x, 4, thu_shifts[j], border)
             j += 1
         else:
             worksheet.write(first_row+x, 4, 'OFF', border)
 
+        # Friday
         worksheet.write(first_row+x, 5, fri_shifts[x], border)
 
+        # Saturday
         if (x+1 == sat_worker) or (x+1 == sat_worker2):
             worksheet.write(first_row+x, 6, sat_shifts[k], border)
             if sat_shifts[k] == '8-12':
@@ -79,12 +89,10 @@ def week(num, sat_worker, sat_worker2):
 
 
 # Set up schedule template
-def template(month_str, day_str, total_weeks, msg):
+def tech_template(month_str, day_str, total_weeks, msg):
     worksheet.set_column('B:G', 12)
     worksheet.set_column('H:H', 5.5)
-    border = workbook.add_format({'border': 1})
-    fill = workbook.add_format({'bg_color': 'silver', 'border': 1})
-    column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursdays', 'Friday', 'Saturday', 'Hours']
+    column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Hours']
     for x in range(7):
         worksheet.write(0, x + 1, column_headers[x], border)
 
@@ -135,5 +143,5 @@ def template(month_str, day_str, total_weeks, msg):
         'align': 'center',
         'valign': 'vcenter',
         'font_size': 16})
-    worksheet.merge_range('A23:H23', msg, merge_format)
+    worksheet.merge_range('A28:H28', msg, merge_format)
     workbook.close()

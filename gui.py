@@ -5,6 +5,8 @@ from tkinter import ttk
 from PIL import ImageTk
 # from tkcalendar import Calendar, DateEntry
 from techs import *
+from acts import *
+from receptionists import *
 
 
 class ScheduleBuilder(tk.Tk):
@@ -54,38 +56,20 @@ class StartPage(tk.Frame):
 
         f = tkfont.Font(family='Calibri', size=10, weight='bold')
         tk.Button(self, text="ACTs", font=f, command=lambda: controller.show_frame("ActMain"),
-            background='CadetBlue3', width=20).pack()
+                  background='CadetBlue3', width=20).pack()
         tk.Button(self, text="Receptionists", font=f, command=lambda: controller.show_frame("RecepMain"),
-            background='CadetBlue3', width=20).pack()
+                  background='CadetBlue3', width=20).pack()
         tk.Button(self, text="Vet Techs", font=f, command=lambda: controller.show_frame("TechMain"),
-            background='CadetBlue3', width=20).pack()
+                  background='CadetBlue3', width=20).pack()
 
 
 class ActMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        label = tk.Label(self, text="ACTs", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
-
-
-class RecepMain(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-        label = tk.Label(self, text="Receptionists", font=controller.title_font)
-        label.pack(side="top", fill="x", pady=10)
-        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
-
-
-class TechMain(tk.Frame):
-    def __init__(self, parent, controller):
-        tk.Frame.__init__(self, parent)
-        self.controller = controller
-
         f = tkfont.Font(family='Calibri', size=14, weight='bold')
-        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Label(self, text="ACTs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
         tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
         sdate = Entry(self, width=12, justify='center')
@@ -93,51 +77,36 @@ class TechMain(tk.Frame):
         sdate.delete(0, END)
         sdate.insert(0, "MM/DD")
 
-
         wks = StringVar(self)
         wks.set("4")  # initial value
         tk.Label(self, text="Total number of weeks to generate:").pack()
         OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
 
-        s1t1 = StringVar(self)
-        s1t2 = StringVar(self)
-        s2t1 = StringVar(self)
-        s2t2 = StringVar(self)
-        s3t1 = StringVar(self)
-        s3t2 = StringVar(self)
-        s4t1 = StringVar(self)
-        s4t2 = StringVar(self)
-        s5t1 = StringVar(self)
-        s5t2 = StringVar(self)
-        techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
-        tk.Label(self, text="Select which techs to work on the following Saturdays:").pack(pady=20)
+        s1a1 = StringVar(self)
+        s1a2 = StringVar(self)
+        s1a3 = StringVar(self)
+
+        tk.Label(self, text="Select which ACTs to work on the following days:").pack(pady=20)
         for x in range(5):
             tk.Label(self, text=x+1).place(x=85, y=213+(30*x))
-        OptionMenu(self, s1t1, *techs).place(width=100, x=105, y=208)
-        OptionMenu(self, s1t2, *techs).place(width=100, x=205, y=208)
-        OptionMenu(self, s2t1, *techs).place(width=100, x=105, y=238)
-        OptionMenu(self, s2t2, *techs).place(width=100, x=205, y=238)
-        OptionMenu(self, s3t1, *techs).place(width=100, x=105, y=268)
-        OptionMenu(self, s3t2, *techs).place(width=100, x=205, y=268)
-        OptionMenu(self, s4t1, *techs).place(width=100, x=105, y=298)
-        OptionMenu(self, s4t2, *techs).place(width=100, x=205, y=298)
-        OptionMenu(self, s5t1, *techs).place(width=100, x=105, y=328)
-        OptionMenu(self, s5t2, *techs).place(width=100, x=205, y=328)
+        OptionMenu(self, s1a1, *acts).place(width=100, x=105, y=208)
+        OptionMenu(self, s1a2, *acts).place(width=100, x=205, y=208)
+        OptionMenu(self, s1a3, *acts).place(width=100, x=105, y=238)
 
         tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
         msg = Entry(self, width=30, justify='center')
         msg.pack()
         msg.delete(0, END)
         msg.insert(0, '')
-
-        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
-
-        # Really need to figure out a better way to pass the selected menu options...
         tk.Button(self, text='Generate', font=f, background='CadetBlue3',
-                command=lambda: test(sdate.get(), s1t1.get(), s1t2.get(), s2t1.get(), s2t2.get(), s3t1.get(), s3t2.get(), s4t1.get(), s4t2.get(), wks.get(), msg.get())).place(x=159, y=435)
+                  command=lambda: test()).place(x=159, y=435)
 
-        def test(sdate, s1t1, s1t2, s2t1, s2t2, s3t1, s3t2, s4t1, s4t2, wks, msg):
-            #print(msg)
+        def test():
+            for i in range(4):
+                act_week(i+1)
+            act_template('4', '2', 4, 'new test')
+
+        def goto_acts(sdate, s1t1, s1t2, s2t1, s2t2, s3t1, s3t2, s4t1, s4t2, wks, msg):
             month_str = sdate[:2]
             day_str = sdate[3:]
             sat_techs = [[] for i in range(5)]
@@ -151,11 +120,68 @@ class TechMain(tk.Frame):
             sat_techs[3].append(s4t2)
 
             for i in range(int(wks)):
-                week(i+1, sat_techs[i][0], sat_techs[i][1])
-            template(month_str, day_str, int(wks), msg)
+                tech_week(i+1, sat_techs[i][0], sat_techs[i][1])
+            tech_template(month_str, day_str, int(wks), msg)
+
+
+class RecepMain(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        # f = tkfont.Font(family='Calibri', size=14, weight='bold')
+        tk.Label(self, text="Receptionists", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
+
+
+class TechMain(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        f = tkfont.Font(family='Calibri', size=14, weight='bold')
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
+
+        tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
+        sdate = Entry(self, width=12, justify='center')
+        sdate.pack(pady=(0, 20))
+        sdate.delete(0, END)
+        sdate.insert(0, "MM/DD")
+
+        wks = StringVar(self)
+        wks.set("4")  # initial value
+        tk.Label(self, text="Total number of weeks to generate:").pack()
+        OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
+
+        # techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
+        sat_techs = [[] for i in range(5)]
+        for i in range(5):
+            for j in range(2):
+                sat_techs[i].append(StringVar(self))
+
+        tk.Label(self, text="Select which techs to work on the following Saturdays:").pack(pady=20)
+        for i in range(5):
+            tk.Label(self, text=i + 1).place(x=85, y=213 + (30*i))
+            for j in range(2):
+                OptionMenu(self, sat_techs[i][j], *techs).place(width=100, x=105+(100*j), y=208+(30*i))
+
+        tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
+        msg = Entry(self, width=30, justify='center')
+        msg.pack()
+        msg.delete(0, END)
+        msg.insert(0, '')
+
+        tk.Button(self, text='Generate', font=f, background='CadetBlue3',
+                  command=lambda: goto_techs(sdate.get(), wks.get(), msg.get())).place(x=250, y=435)
+
+        def goto_techs(sdate, wks, msg):
+            month_str = sdate[:2]
+            day_str = sdate[3:]
+            for i in range(int(wks)):
+                tech_week(i+1, sat_techs[i][0].get(), sat_techs[i][1].get())
+            tech_template(month_str, day_str, int(wks), msg)
+
 
 # if __name__ == "__main__":
-sat1tech1 = ''
 app = ScheduleBuilder()
 app.title("CRAH Schedule Builder")
 app.geometry("420x500")
