@@ -22,8 +22,9 @@ worksheet = workbook.add_worksheet('ACTs')
 worksheet.set_landscape()
 worksheet.set_default_row(12)
 border = workbook.add_format({'border': 1})
-fill = workbook.add_format({'font_size': 8, 'bg_color': 'silver', 'border': 1})
+fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 small_text = workbook.add_format({'font_size': 8, 'border': 1})
+merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
 
 
 # Generate full week
@@ -115,7 +116,7 @@ def act_template(month_str, day_str, total_weeks, msg):
     for x in range(8):
         worksheet.write(0, x+1, column_headers[x], small_text)
 
-    # Get rid of leading zeros
+    # Remove leading zeros for month & day
     month_str = int(month_str)
     month_str = str(month_str)
     day_str = int(day_str)
@@ -133,7 +134,7 @@ def act_template(month_str, day_str, total_weeks, msg):
         for j in range(7):
             worksheet.write_blank((len(acts)+1)*i+1, 0, None, fill)
             worksheet.write_blank((len(acts)+1)*i+1, 8, None, fill)
-            worksheet.write((len(acts)+1)*i+1, j + 1, month_str + '/' + day_str, fill)
+            worksheet.write((len(acts)+1)*i+1, j+1, month_str + '/' + day_str, fill)
             month = int(month_str)
             day = int(day_str)
             if day == month_end:
@@ -147,10 +148,5 @@ def act_template(month_str, day_str, total_weeks, msg):
             month_str = str(month)
             day_str = str(day)
 
-    merge_format = workbook.add_format({
-        'bold': 1,
-        'align': 'center',
-        'valign': 'vcenter',
-        'font_size': 16})
     worksheet.merge_range('A31:H31', msg, merge_format)
     workbook.close()

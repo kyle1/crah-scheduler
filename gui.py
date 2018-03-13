@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import *
 from tkinter import font as tkfont
 from tkinter import ttk
+from tkinter import messagebox
 from PIL import ImageTk
 # from tkcalendar import Calendar, DateEntry
 from techs import *
@@ -67,7 +68,7 @@ class ActMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        f = tkfont.Font(family='Calibri', size=14, weight='bold')
+        # f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Label(self, text="ACTs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
@@ -78,50 +79,53 @@ class ActMain(tk.Frame):
         sdate.insert(0, "MM/DD")
 
         wks = StringVar(self)
-        wks.set("4")  # initial value
+        wks.set("4")
         tk.Label(self, text="Total number of weeks to generate:").pack()
         OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
 
-        s1a1 = StringVar(self)
-        s1a2 = StringVar(self)
-        s1a3 = StringVar(self)
+        sat_acts = [[] for _ in range(5)]
+        sun_acts = [[] for _ in range(5)]
+        tk.Label(self, text="Select which ACTS to work on the following days:").pack(pady=20)
+        tk.Label(self, text="------Sunday------").place(x=32, y=208)
+        tk.Label(self, text="----------Saturday----------").place(x=210, y=208)
+        for i in range(5):
+            tk.Label(self, text=i + 1).place(x=5, y=233 + (30*i))
 
-        tk.Label(self, text="Select which ACTs to work on the following days:").pack(pady=20)
-        for x in range(5):
-            tk.Label(self, text=x+1).place(x=85, y=213+(30*x))
-        OptionMenu(self, s1a1, *acts).place(width=100, x=105, y=208)
-        OptionMenu(self, s1a2, *acts).place(width=100, x=205, y=208)
-        OptionMenu(self, s1a3, *acts).place(width=100, x=105, y=238)
+            for j in range(2):
+                sun_acts[i].append(StringVar(self))
+                OptionMenu(self, sun_acts[i][j], *acts).place(width=85, x=20+(80*j), y=228+(30*i))
+            for k in range(3):
+                sat_acts[i].append(StringVar(self))
+                OptionMenu(self, sat_acts[i][k], *acts).place(width=85, x=180+(80*k), y=228+(30*i))
 
         tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
         msg = Entry(self, width=30, justify='center')
         msg.pack()
         msg.delete(0, END)
         msg.insert(0, '')
+
+        f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Button(self, text='Generate', font=f, background='CadetBlue3',
-                  command=lambda: test()).place(x=159, y=435)
+                  command=lambda: generate_acts()).place(x=159, y=455)
 
-        def test():
-            for i in range(4):
-                act_week(i+1)
-            act_template('4', '2', 4, 'new test')
+        def generate_acts():
+            month_str = sdate.get()[:2]
+            day_str = sdate.get()[3:]
 
-        def goto_acts(sdate, s1t1, s1t2, s2t1, s2t2, s3t1, s3t2, s4t1, s4t2, wks, msg):
-            month_str = sdate[:2]
-            day_str = sdate[3:]
-            sat_techs = [[] for i in range(5)]
-            sat_techs[0].append(s1t1)
-            sat_techs[0].append(s1t2)
-            sat_techs[1].append(s2t1)
-            sat_techs[1].append(s2t2)
-            sat_techs[2].append(s3t1)
-            sat_techs[2].append(s3t2)
-            sat_techs[3].append(s4t1)
-            sat_techs[3].append(s4t2)
-
-            for i in range(int(wks)):
-                tech_week(i+1, sat_techs[i][0], sat_techs[i][1])
-            tech_template(month_str, day_str, int(wks), msg)
+            for x in range(int(wks.get())):
+                if sun_acts[x][0].get() == sun_acts[x][1].get():
+                    messagebox.showerror("Error", "Week {} Sunday: Same ACT selected twice.".format(x + 1))
+                    return
+                elif sat_acts[x][0].get() == sat_acts[x][1].get() or \
+                    sat_acts[x][0].get() == sat_acts[x][2].get() or \
+                    sat_acts[x][1].get() == sat_acts[x][2].get():
+                    messagebox.showerror("Error", "Week {} Saturday: An ACT was selected more than once".format(x + 1))
+                    return
+                else:
+                    act_week(x+1, sat_acts[x][0].get(), sat_acts[x][1].get(), sat_acts[x][2].get(),
+                             sun_acts[x][0].get(), sun_acts[x][1].get())
+            act_template(month_str, day_str, int(wks.get()), msg.get())
+            messagebox.showinfo("Success", "ACT schedule created!")
 
 
 class RecepMain(tk.Frame):
@@ -132,12 +136,58 @@ class RecepMain(tk.Frame):
         tk.Label(self, text="Receptionists", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
+        tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
+        sdate = Entry(self, width=12, justify='center')
+        sdate.pack(pady=(0, 20))
+        sdate.delete(0, END)
+        sdate.insert(0, "MM/DD")
+
+        wks = StringVar(self)
+        wks.set("4")
+        tk.Label(self, text="Total number of weeks to generate:").pack()
+        OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
+
+        sat_receps = [[] for _ in range(5)]
+        tk.Label(self, text="Select which receptionists to work on the following Saturdays:").pack(pady=20)
+        for i in range(5):
+            tk.Label(self, text=i + 1).place(x=15, y=213 + (30*i))
+            for j in range(4):
+                sat_receps[i].append(StringVar(self))
+                OptionMenu(self, sat_receps[i][j], *receps).place(width=90, x=30+(90*j), y=208+(30*i))
+
+        tk.Label(self, text="Append message to schedule?").pack(pady=(155, 0))
+        msg = Entry(self, width=30, justify='center')
+        msg.pack()
+        msg.delete(0, END)
+        msg.insert(0, '')
+
+        f = tkfont.Font(family='Calibri', size=14, weight='bold')
+        tk.Button(self, text='Generate', font=f, background='CadetBlue3',
+                  command=lambda: generate_receps()).place(x=159, y=435)
+
+        def generate_receps():
+            month_str = sdate.get()[:2]
+            day_str = sdate.get()[3:]
+
+            for x in range(int(wks.get())):
+                if sat_receps[x][0].get() == sat_receps[x][1].get() or \
+                    sat_receps[x][0].get() == sat_receps[x][2].get() or \
+                    sat_receps[x][0].get() == sat_receps[x][3].get() or \
+                    sat_receps[x][1].get() == sat_receps[x][2].get() or \
+                    sat_receps[x][1].get() == sat_receps[x][3].get() or \
+                    sat_receps[x][2].get() == sat_receps[x][3].get():
+                        messagebox.showerror("Error",
+                                             "Week {}: A receptionist was selected more than once.".format(x+1))
+                        return
+                else:
+                    recep_week(x+1, sat_receps[x][0].get(), sat_receps[x][1].get(), sat_receps[x][2].get(), sat_receps[x][3].get())
+            recep_template(month_str, day_str, int(wks.get()), msg.get())
+            messagebox.showinfo("Success", "Receptionist schedule created!")
 
 class TechMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
@@ -148,20 +198,17 @@ class TechMain(tk.Frame):
         sdate.insert(0, "MM/DD")
 
         wks = StringVar(self)
-        wks.set("4")  # initial value
+        wks.set("4")
         tk.Label(self, text="Total number of weeks to generate:").pack()
         OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
 
         # techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
-        sat_techs = [[] for i in range(5)]
-        for i in range(5):
-            for j in range(2):
-                sat_techs[i].append(StringVar(self))
-
+        sat_techs = [[] for _ in range(5)]
         tk.Label(self, text="Select which techs to work on the following Saturdays:").pack(pady=20)
         for i in range(5):
             tk.Label(self, text=i + 1).place(x=85, y=213 + (30*i))
             for j in range(2):
+                sat_techs[i].append(StringVar(self))
                 OptionMenu(self, sat_techs[i][j], *techs).place(width=100, x=105+(100*j), y=208+(30*i))
 
         tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
@@ -170,16 +217,21 @@ class TechMain(tk.Frame):
         msg.delete(0, END)
         msg.insert(0, '')
 
+        f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Button(self, text='Generate', font=f, background='CadetBlue3',
-                  command=lambda: goto_techs(sdate.get(), wks.get(), msg.get())).place(x=250, y=435)
+                  command=lambda: generate_techs()).place(x=159, y=435)
 
-        def goto_techs(sdate, wks, msg):
-            month_str = sdate[:2]
-            day_str = sdate[3:]
-            for i in range(int(wks)):
-                tech_week(i+1, sat_techs[i][0].get(), sat_techs[i][1].get())
-            tech_template(month_str, day_str, int(wks), msg)
-
+        def generate_techs():
+            month_str = sdate.get()[:2]
+            day_str = sdate.get()[3:]
+            for x in range(int(wks.get())):
+                if sat_techs[x][0].get() == sat_techs[x][1].get():
+                    messagebox.showerror("Error", "Week {}: Same vet tech selected twice.".format(x+1))
+                    return
+                else:
+                    tech_week(x+1, sat_techs[x][0].get(), sat_techs[x][1].get())
+            tech_template(month_str, day_str, int(wks.get()), msg.get())
+            messagebox.showinfo("Success", "Vet tech schedule created!")
 
 # if __name__ == "__main__":
 app = ScheduleBuilder()
