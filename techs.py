@@ -141,5 +141,5 @@ def tech_template(month_str, day_str, total_weeks, msg):
             month_str = str(month)
             day_str = str(day)
 
-    worksheet.merge_range('A28:H28', msg, merge_format)
+    worksheet.merge_range('A28:H29', msg, merge_format)
     workbook.close()
