@@ -122,8 +122,8 @@ class ActMain(tk.Frame):
                     messagebox.showerror("Error", "Week {} Saturday: An ACT was selected more than once".format(x + 1))
                     return
                 else:
-                    act_week(x+1, sat_acts[x][0].get(), sat_acts[x][1].get(), sat_acts[x][2].get(),
-                             sun_acts[x][0].get(), sun_acts[x][1].get())
+                    act_week(x+1, sun_acts[x][0].get(), sun_acts[x][1].get(),
+                             sat_acts[x][0].get(), sat_acts[x][1].get(), sat_acts[x][2].get())
             act_template(month_str, day_str, int(wks.get()), msg.get())
             messagebox.showinfo("Success", "ACT schedule created!")
 
@@ -180,7 +180,8 @@ class RecepMain(tk.Frame):
                                              "Week {}: A receptionist was selected more than once.".format(x+1))
                         return
                 else:
-                    recep_week(x+1, sat_receps[x][0].get(), sat_receps[x][1].get(), sat_receps[x][2].get(), sat_receps[x][3].get())
+                    recep_week(x+1, sat_receps[x][0].get(), sat_receps[x][1].get(),
+                               sat_receps[x][2].get(), sat_receps[x][3].get())
             recep_template(month_str, day_str, int(wks.get()), msg.get())
             messagebox.showinfo("Success", "Receptionist schedule created!")
 
