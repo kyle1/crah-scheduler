@@ -22,52 +22,52 @@ worksheet.set_default_row(10.5)
 border = workbook.add_format({'font_size': 8, 'border': 1})
 fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
-
+silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
 
 # Generate full week
 def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
     for x in range(8):
         if sat_worker == receps[x]:
-            sat_worker = x+1
+            sat_worker = x
         if sat_worker2 == receps[x]:
-            sat_worker2 = x+1
+            sat_worker2 = x
         if sat_worker3 == receps[x]:
-            sat_worker3 = x+1
+            sat_worker3 = x
         if sat_worker4 == receps[x]:
-            sat_worker4 = x+1
+            sat_worker4 = x
 
-    sat_list = [sat_worker, sat_worker2, sat_worker3, sat_worker4]
+    # Set up to give Saturday workers a half day shift during the week
     half_list = []
     pt_sats = 0
 
-    if sat_worker == 7 or sat_worker == 8:
+    if sat_worker == 6 or sat_worker == 7:
         pt_sats += 1
     else:
         half_list.append(sat_worker)
 
-    if sat_worker2 == 7 or sat_worker2 == 8:
+    if sat_worker2 == 6 or sat_worker2 == 7:
         pt_sats += 1
     else:
         half_list.append(sat_worker2)
 
-    if sat_worker3 == 7 or sat_worker3 == 8:
+    if sat_worker3 == 6 or sat_worker3 == 7:
         pt_sats += 1
     else:
         half_list.append(sat_worker3)
 
-    if sat_worker4 == 7 or sat_worker4 == 8:
+    if sat_worker4 == 6 or sat_worker4 == 7:
         pt_sats += 1
     else:
         half_list.append(sat_worker4)
 
     random.shuffle(half_list)
 
-    # Ensure half days are given to Saturday workers first, then FT employees
+    # Half day shifts are given to Saturday workers first, then to random full-time employees
     if len(half_list) == 2:
         mon_half = half_list[0]
         tue_half = half_list[1]
         maybe_half = []
-        for x in range(2, 7):
+        for x in range(1, 6):
             if mon_half != x and tue_half != x:
                 maybe_half.append(x)
 
@@ -81,7 +81,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         wed_half = half_list[2]
 
         maybe_half2 = []
-        for x in range(2, 7):
+        for x in range(1, 6):
             if mon_half != x and tue_half != x and wed_half != x:
                 maybe_half2.append(x)
 
@@ -94,10 +94,11 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         wed_half = half_list[2]
         thu_half = half_list[3]
 
-    for x in range(2, 7):
+    for x in range(1, 6):
         if x != mon_half and x != tue_half and x != wed_half and x != thu_half:
             fri_half = x
 
+    # Shuffle shifts before assigning to employees
     random.shuffle(mon_shifts)
     random.shuffle(tue_shifts)
     random.shuffle(wed_shifts)
@@ -112,91 +113,81 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Receptionist names
         worksheet.write(first_row+x, 0, receps[x], border)
 
-    # Darcy's shifts
-    worksheet.write(first_row, 1, '715-245 10-1030', border)
-    worksheet.write(first_row, 2, '715-245 10-1030', border)
-    worksheet.write(first_row, 3, '715-245 10-1030', border)
-    worksheet.write(first_row, 4, '715-245 10-1030', border)
-    worksheet.write(first_row, 5, '715-245 10-1030', border)
+    # Darcy
+    for x in range(1, 6):
+        worksheet.write(first_row, x, '715-245 10-1030', border)
+
     worksheet.write(first_row, 6, 'OFF', border)
     worksheet.write(first_row, 7, '35', border)
 
     hours = [35, 0, 0, 0, 0, 0, 0, 0]
-    for x in range(5):
-        # Monday
-        if x+2 != mon_half:
-            worksheet.write(first_row+x+1, 1, mon_shifts[i], border)
-            i += 1
-            hours[x+1] = 8
-        else:
-            worksheet.write(first_row+x+1, 1, '2-CL', border)
-            hours[x+1] = 4
 
-        worksheet.write(first_row+x+2, 1, 'OFF', border)
-        worksheet.write(first_row+x+3, 1, 'OFF', border)
+    # Haley, Carlos, Jenna G, Megan, Sydney
+    for x in range(1, 6):
+        # Monday
+        if x != mon_half:
+            worksheet.write(first_row+x, 1, mon_shifts[i], border)
+            i += 1
+            hours[x] = 8
+        else:
+            worksheet.write(first_row+x, 1, '2-CL', border)
+            hours[x] = 4
 
         # Tuesday
-        if x+2 != tue_half:
-            worksheet.write(first_row+x+1, 2, tue_shifts[j], border)
+        if x != tue_half:
+            worksheet.write(first_row+x, 2, tue_shifts[j], border)
             j += 1
-            hours[x+1] += 8
+            hours[x] += 8
         else:
-            worksheet.write(first_row+x+1, 2, '2-CL', border)
-            hours[x+1] += 4
-
-        worksheet.write(first_row + x + 2, 2, 'OFF', border)
-        worksheet.write(first_row + x + 3, 2, 'OFF', border)
+            worksheet.write(first_row+x, 2, '2-CL', border)
+            hours[x] += 4
 
         # Wednesday
-        if x+2 != wed_half:
-            worksheet.write(first_row+x+1, 3, wed_shifts[k], border)
+        if x != wed_half:
+            worksheet.write(first_row+x, 3, wed_shifts[k], border)
             k += 1
-            hours[x+1] += 8
+            hours[x] += 8
         else:
-            worksheet.write(first_row+x+1, 3, '2-CL', border)
-            hours[x+1] += 4
-
-        worksheet.write(first_row + x + 2, 3, 'OFF', border)
-        worksheet.write(first_row + x + 3, 3, 'OFF', border)
+            worksheet.write(first_row+x, 3, '2-CL', border)
+            hours[x] += 4
 
         # Thursday
-        if x+2 != thu_half:
-            worksheet.write(first_row+x+1, 4, thu_shifts[m], border)
+        if x != thu_half:
+            worksheet.write(first_row+x, 4, thu_shifts[m], border)
             m += 1
-            hours[x+1] += 8
+            hours[x] += 8
         else:
-            worksheet.write(first_row+x+1, 4, '2-CL', border)
-            hours[x+1] += 4
-
-        worksheet.write(first_row + x + 2, 4, 'OFF', border)
-        worksheet.write(first_row + x + 3, 4, 'OFF', border)
+            worksheet.write(first_row+x, 4, '2-CL', border)
+            hours[x] += 4
 
         # Friday
-        if x+2 != fri_half:
-            worksheet.write(first_row+x+1, 5, fri_shifts[n], border)
+        if x != fri_half:
+            worksheet.write(first_row+x, 5, fri_shifts[n], border)
             n += 1
-            hours[x+1] += 8
+            hours[x] += 8
         else:
-            worksheet.write(first_row+x+1, 5, '2-CL', border)
-            hours[x+1] += 4
+            worksheet.write(first_row+x, 5, '2-CL', border)
+            hours[x] += 4
 
-        worksheet.write(first_row + x + 2, 5, 'OFF', border)
-        worksheet.write(first_row + x + 3, 5, 'OFF', border)
+    # Gloria and Blanca (OFF during week)
+    for x in range(6, 8):
+        for j in range(1, 6):
+            worksheet.write(first_row+x, j, 'OFF', border)
 
-    for x in range(7):
-        if x+2 == sat_worker or x+2 == sat_worker2 or x+2 == sat_worker3 or x+2 == sat_worker4:
+    for x in range(1, 8):
+        if x == sat_worker or x == sat_worker2 or x == sat_worker3 or x == sat_worker4:
             # Saturday
-            worksheet.write(first_row+x+1, 6, sat_shifts[p], border)
+            worksheet.write(first_row+x, 6, sat_shifts[p], border)
             if sat_shifts[p] == '8-12':
-                hours[x+1] += 4
+                hours[x] += 4
             else:
-                hours[x+1] += 4.3
+                hours[x] += 4.3
             p += 1
         else:
-            worksheet.write(first_row+x+1, 6, 'OFF', border)
+            worksheet.write(first_row+x, 6, 'OFF', border)
 
+    # Hours
     for x in range(8):
-        # Hours
         worksheet.write(first_row+x, 7, hours[x], border)
 
 
@@ -257,4 +248,3 @@ def recep_template(month_str, day_str, total_weeks, msg):
         worksheet.merge_range('A40:H41', msg, merge_format)
 
     workbook.close()
-

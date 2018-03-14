@@ -9,9 +9,9 @@ thu_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM']  # 8-11:30 LM
 fri_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM', '8-5:30 SP']
 
 # Read employee names from techs.txt
-# with open("techs.txt") as f:
-#     techs = f.readlines()
-# techs = [x.strip() for x in techs]
+#with open("techs.txt") as f:
+#    techs = f.readlines()
+#techs = [x.strip() for x in techs]
 techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
 
 workbook = xlsxwriter.Workbook('tech_schedule.xlsx')
@@ -27,9 +27,9 @@ merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center
 def tech_week(num, sat_worker, sat_worker2):
     for x in range(4):
         if sat_worker == techs[x]:
-            sat_worker = x+1
+            sat_worker = x
         if sat_worker2 == techs[x]:
-            sat_worker2 = x+1
+            sat_worker2 = x
 
     random.shuffle(mon_shifts)
     random.shuffle(tue_shifts)
@@ -41,14 +41,6 @@ def tech_week(num, sat_worker, sat_worker2):
     random.shuffle(sat_list)
     wed_half = sat_list[0]
     thu_half = sat_list[1]
-
-    '''
-    wed_half = random.choice([sat_worker, sat_worker2])
-    if wed_half == sat_worker:
-        thu_half = sat_worker2
-    else:
-        thu_half = sat_worker
-    '''
 
     i, j = 0, 0
     first_row = (num * (len(techs)+1)) - (len(techs)-1)
@@ -63,14 +55,14 @@ def tech_week(num, sat_worker, sat_worker2):
         worksheet.write(first_row+x, 2, tue_shifts[x], border)
 
         # Wednesday
-        if x+1 != wed_half:
+        if x != wed_half:
             worksheet.write(first_row+x, 3, wed_shifts[i], border)
             i += 1
         else:
             worksheet.write(first_row+x, 3, '7:30-11:30 SX', border)
 
         # Thursday
-        if x+1 != thu_half:
+        if x != thu_half:
             worksheet.write(first_row+x, 4, thu_shifts[j], border)
             j += 1
         else:
@@ -80,9 +72,9 @@ def tech_week(num, sat_worker, sat_worker2):
         worksheet.write(first_row+x, 5, fri_shifts[x], border)
 
         # Saturday
-        if x+1 == wed_half:
+        if x == wed_half:
             worksheet.write(first_row+x, 6, '8-12', border)
-        elif x+1 == thu_half:
+        elif x == thu_half:
             worksheet.write(first_row+x, 6, '7:30-12', border)
         else:
             worksheet.write(first_row+x, 6, 'OFF', border)
