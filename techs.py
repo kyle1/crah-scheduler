@@ -1,5 +1,6 @@
 import xlsxwriter
 import random
+import linecache
 
 # Shifts for each work day
 mon_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM', '8-5:30 SP']
@@ -8,11 +9,9 @@ wed_shifts = ['8-5:30 JM', '8-5:30 LM', '8-5:30 SP']  # 7:30-11:30 SX
 thu_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM']  # 8-11:30 LM
 fri_shifts = ['7:30-5 SX', '8-5:30 CH', '8-5:30 JM', '8-5:30 SP']
 
-# Read employee names from techs.txt
-#with open("techs.txt") as f:
-#    techs = f.readlines()
-#techs = [x.strip() for x in techs]
-techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
+# Read employee names from file
+line = linecache.getline('employees.txt', 8)
+techs = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('tech_schedule.xlsx')
 worksheet = workbook.add_worksheet('Techs')
@@ -99,9 +98,9 @@ def tech_template(month_str, day_str, total_weeks, msg):
 
     # Write calendar dates to appropriate cells
     for i in range(total_weeks):
-        if month_str == '02':
+        if month_str == '2':
             month_end = 28
-        elif month_str == '04' or month_str == '06' or month_str == '09' or month_str == '11':
+        elif month_str == '4' or month_str == '6' or month_str == '9' or month_str == '11':
             month_end = 30
         else:
             month_end = 31

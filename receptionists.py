@@ -1,5 +1,6 @@
 import xlsxwriter
 import random
+import linecache
 
 # Shifts for each work day
 mon_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230'] # 130/2-CL, 715-245 10-1030
@@ -9,11 +10,9 @@ thu_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 13
 fri_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230'] # 130/2-CL, 715-245 10-1030
 sat_shifts = ['B8-CL', '745-12', '8-12', '8-CL']
 
-# Read employee names from techs.txt
-# with open("techs.txt") as f:
-#     techs = f.readlines()
-# techs = [x.strip() for x in techs]
-receps = ['Darcy', 'Haley', 'Carlos', 'Jenna G', 'Megan', 'Sydney', 'Gloria', 'Blanca']
+# Read employee names from file
+line = linecache.getline('employees.txt', 5)
+receps = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('recep_schedule.xlsx')
 worksheet = workbook.add_worksheet('Receptionists')
@@ -207,9 +206,9 @@ def recep_template(month_str, day_str, total_weeks, msg):
 
     # Write calendar dates to appropriate cells
     for i in range(total_weeks):
-        if month_str == '02':
+        if month_str == '2':
             month_end = 28
-        elif month_str == '04' or month_str == '06' or month_str == '09' or month_str == '11':
+        elif month_str == '4' or month_str == '6' or month_str == '9' or month_str == '11':
             month_end = 30
         else:
             month_end = 31

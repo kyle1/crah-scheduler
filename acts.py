@@ -1,5 +1,6 @@
 import xlsxwriter
 import random
+import linecache
 
 # Shifts for each work day
 mon_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130', '9-CL 130-230 TECH']
@@ -10,12 +11,9 @@ fri_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 
 sat_shifts = ['730-430 12-1 PR', '730-430 12-1', '8-5 12-2']
 sun_shifts = ['8-5 12-1 PR', '8-5 12-1']
 
-
-# Read employee names from acts.txt
-# with open("acts.txt") as f:
-#     acts = f.readlines()
-# acts = [x.strip() for x in acts]
-acts = ['Shawnn', 'Sanora', 'Lucy', 'Emily', 'Alexis', 'Courtney']
+# Read employee names from file
+line = linecache.getline('employees.txt', 2)
+acts = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('act_schedule.xlsx')
 worksheet = workbook.add_worksheet('ACTs')
@@ -88,7 +86,7 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
         # Monday
         if x != mon_off:
             if mon_shifts[mon_ctr] == '9-CL 130-230 TECH':
-                worksheet.write(first_row + x, 2, mon_shifts[sun_ctr], silver_bg)
+                worksheet.write(first_row + x, 2, mon_shifts[mon_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 2, mon_shifts[mon_ctr], small_text)
             mon_ctr += 1
@@ -132,7 +130,7 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
         # Friday
         if x != fri_off:
             if fri_shifts[fri_ctr] == '9-CL 130-230 TECH':
-                worksheet.write(first_row + x, 1, fri_shifts[fri_ctr], silver_bg)
+                worksheet.write(first_row + x, 6, fri_shifts[fri_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 6, fri_shifts[fri_ctr], small_text)
             fri_ctr += 1
@@ -175,9 +173,9 @@ def act_template(month_str, day_str, total_weeks, msg):
 
     # Write calendar dates to appropriate cells
     for i in range(total_weeks):
-        if month_str == '02':
+        if month_str == '2':
             month_end = 28
-        elif month_str == '04' or month_str == '06' or month_str == '09' or month_str == '11':
+        elif month_str == '4' or month_str == '6' or month_str == '9' or month_str == '11':
             month_end = 30
         else:
             month_end = 31

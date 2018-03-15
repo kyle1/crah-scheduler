@@ -1,4 +1,5 @@
 import os.path
+import sys
 from cx_Freeze import setup, Executable
 
 PYTHON_INSTALL_DIR = os.path.dirname(os.path.dirname(os.__file__))
@@ -11,12 +12,13 @@ options = {
             os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tk86t.dll'),
             os.path.join(PYTHON_INSTALL_DIR, 'DLLs', 'tcl86t.dll'),
             'crah.png',
+            'employees.txt',
          ],
         "packages": ["sys", "os", "tkinter", "random", "xlsxwriter"],
     },
 }
 
-exe = Executable(script="gui.py", targetName="crah-scheduler.exe", base="Win32GUI", icon='crah.ico')
+exe = Executable(script="gui.py", targetName="crah-scheduler.exe", base="Win32GUI")
 base = None
 setup( name = "crah-scheduler",
        version = "1.0",

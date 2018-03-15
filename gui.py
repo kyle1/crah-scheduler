@@ -68,7 +68,6 @@ class ActMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
         self.controller = controller
-        # f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Label(self, text="ACTs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
 
@@ -80,25 +79,25 @@ class ActMain(tk.Frame):
 
         wks = StringVar(self)
         wks.set("4")
-        tk.Label(self, text="Total number of weeks to generate:").pack()
-        OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
+        tk.Label(self, text="Total number of weeks to generate:").pack(pady=(10, 0))
+        OptionMenu(self, wks, "1", "2", "3", "4", "5").pack(pady=(0, 20))
 
         sat_acts = [[] for _ in range(5)]
         sun_acts = [[] for _ in range(5)]
-        tk.Label(self, text="Select which ACTS to work on the following days:").pack(pady=20)
-        tk.Label(self, text="------Sunday------").place(x=32, y=208)
-        tk.Label(self, text="----------Saturday----------").place(x=210, y=208)
+        tk.Label(self, text="Select which ACTS to work on the following days:").pack(pady=(10, 0))
+        tk.Label(self, text="------Sunday------").place(x=117, y=232)
+        tk.Label(self, text="----------Saturday----------").place(x=325, y=232)
         for i in range(5):
-            tk.Label(self, text=i + 1).place(x=5, y=233 + (30*i))
+            tk.Label(self, text='Week {}'.format(i+1)).place(x=25, y=255 + (30*i))
 
             for j in range(2):
                 sun_acts[i].append(StringVar(self))
-                OptionMenu(self, sun_acts[i][j], *acts).place(width=85, x=20+(80*j), y=228+(30*i))
+                OptionMenu(self, sun_acts[i][j], *acts).place(width=85, x=85+(85*j), y=250+(30*i))
             for k in range(3):
                 sat_acts[i].append(StringVar(self))
-                OptionMenu(self, sat_acts[i][k], *acts).place(width=85, x=180+(80*k), y=228+(30*i))
+                OptionMenu(self, sat_acts[i][k], *acts).place(width=85, x=275+(85*k), y=250+(30*i))
 
-        tk.Label(self, text="Append message to schedule?").pack(pady=(145, 0))
+        tk.Label(self, text="Append message to schedule?").pack(pady=(205, 0))
         msg = Entry(self, width=30, justify='center')
         msg.pack()
         msg.delete(0, END)
@@ -106,24 +105,68 @@ class ActMain(tk.Frame):
 
         f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Button(self, text='Generate', font=f, background='CadetBlue3',
-                  command=lambda: generate_acts()).place(x=159, y=455)
+                  command=lambda: generate_acts()).pack(pady=(35, 0))
 
         def generate_acts():
+            # Check that input for beginning schedule date is valid
+            if len(sdate.get()) != 5 or sdate.get()[2] != '/':
+                messagebox.showerror("Error", "Invalid date input. Please use MM/DD")
+                return
             month_str = sdate.get()[:2]
             day_str = sdate.get()[3:]
+            try:
+                val = int(month_str)
+            except ValueError:
+                messagebox.showerror("Error", "Invalid date input. Please use MM/DD")
+                return
+            try:
+                val2 = int(day_str)
+            except ValueError:
+                messagebox.showerror("Error", "Invalid date input. Please use MM/DD")
+                return
 
             for x in range(int(wks.get())):
+                # Check that an employee is selected for every shift
+                for i in range(2):
+                    if sun_acts[x][i].get() == '':
+                        messagebox.showerror("Error", "Week {}: Not enough selections made".format(x+1))
+                        return
+                for j in range(3):
+                    if sat_acts[x][j].get() == '':
+                        print("Saturday Error!")
+                        messagebox.showerror("Error", "Week {}: Not enough selections made".format(x+1))
+                        return
+                # Check that an employee isn't selected more than once for the same day
                 if sun_acts[x][0].get() == sun_acts[x][1].get():
-                    messagebox.showerror("Error", "Week {} Sunday: Same ACT selected twice.".format(x + 1))
+                    messagebox.showerror("Error", "Week {} Sunday: An ACT was selected more than once.".format(x+1))
                     return
                 elif sat_acts[x][0].get() == sat_acts[x][1].get() or \
                     sat_acts[x][0].get() == sat_acts[x][2].get() or \
-                    sat_acts[x][1].get() == sat_acts[x][2].get():
-                    messagebox.showerror("Error", "Week {} Saturday: An ACT was selected more than once".format(x + 1))
-                    return
-                else:
-                    act_week(x+1, sun_acts[x][0].get(), sun_acts[x][1].get(),
-                             sat_acts[x][0].get(), sat_acts[x][1].get(), sat_acts[x][2].get())
+                        sat_acts[x][1].get() == sat_acts[x][2].get():
+                            messagebox.showerror("Error", ("Week {} Saturday: An ACT was selected "
+                                                           "more than once").format(x+1))
+                            return
+
+            # Check that no employees are selected for the weeks that will not be generated
+            # NOT WORKING
+            """"""
+            if int(wks.get()) < 5:
+                for x in range(int(wks.get()), 5):
+                    for i in range(2):
+                        if sun_acts[x][i].get() != '':
+                            messagebox.showerror("Error", ("Week {}: Selection(s) made past number of "
+                                                           "weeks set to be generated").format(x + 1))
+                            return
+                    for j in range(3):
+                        if sat_acts[x][j].get() != '':
+                            messagebox.showerror("Error", ("Week {}: Selection(s) made past number of "
+                                                           "weeks set to be generated").format(x + 1))
+                            return
+
+            # No Errors found
+            for x in range(int(wks.get())):
+                act_week(x + 1, sun_acts[x][0].get(), sun_acts[x][1].get(),
+                         sat_acts[x][0].get(), sat_acts[x][1].get(), sat_acts[x][2].get())
             act_template(month_str, day_str, int(wks.get()), msg.get())
             messagebox.showinfo("Success", "ACT schedule created!")
 
@@ -185,6 +228,7 @@ class RecepMain(tk.Frame):
             recep_template(month_str, day_str, int(wks.get()), msg.get())
             messagebox.showinfo("Success", "Receptionist schedule created!")
 
+
 class TechMain(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
@@ -203,7 +247,6 @@ class TechMain(tk.Frame):
         tk.Label(self, text="Total number of weeks to generate:").pack()
         OptionMenu(self, wks, "1", "2", "3", "4", "5").pack()
 
-        # techs = ['Bobby', 'Suzy', 'Jenna', 'Amy']
         sat_techs = [[] for _ in range(5)]
         tk.Label(self, text="Select which techs to work on the following Saturdays:").pack(pady=20)
         for i in range(5):
@@ -237,6 +280,7 @@ class TechMain(tk.Frame):
 # if __name__ == "__main__":
 app = ScheduleBuilder()
 app.title("CRAH Schedule Builder")
-app.geometry("420x500")
+app.geometry("560x580")
 ttk.Style(app).theme_use('clam')
+app.resizable(width=False, height=False)
 app.mainloop()
