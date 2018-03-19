@@ -17,6 +17,15 @@ workbook = xlsxwriter.Workbook('tech_schedule.xlsx')
 worksheet = workbook.add_worksheet('Techs')
 worksheet.set_landscape()
 worksheet.set_default_row(12)
+
+'''
+Bold Times New Roman formatting
+border = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'border': 1})
+fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
+merge_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
+silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'silver'})
+'''
+
 border = workbook.add_format({'font_size': 8, 'border': 1})
 fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
