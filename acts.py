@@ -89,8 +89,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
                 worksheet.write(first_row + x, 2, mon_shifts[mon_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 2, mon_shifts[mon_ctr], small_text)
+            if mon_shifts[mon_ctr] == '7-4 1130-130':
+                hours += 7
+            else:
+                hours += 8
             mon_ctr += 1
-            hours += 8
         else:
             worksheet.write(first_row + x, 2, 'OFF', small_text)
 
@@ -100,8 +103,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
                 worksheet.write(first_row + x, 3, tue_shifts[tue_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 3, tue_shifts[tue_ctr], small_text)
+            if tue_shifts[tue_ctr] == '7-4 1130-130':
+                hours += 7
+            else:
+                hours += 8
             tue_ctr += 1
-            hours += 8
         else:
             worksheet.write(first_row + x, 3, 'OFF', small_text)
 
@@ -111,8 +117,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
                 worksheet.write(first_row + x, 4, wed_shifts[wed_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 4, wed_shifts[wed_ctr], small_text)
+            if wed_shifts[wed_ctr] == '7-4 1130-130':
+                hours += 7
+            else:
+                hours += 8
             wed_ctr += 1
-            hours += 8
         else:
             worksheet.write(first_row + x, 4, 'OFF', small_text)
 
@@ -122,8 +131,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
                 worksheet.write(first_row + x, 5, thu_shifts[thu_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 5, thu_shifts[thu_ctr], small_text)
+            if thu_shifts[thu_ctr] == '7-4 1130-130':
+                hours += 7
+            else:
+                hours += 8
             thu_ctr += 1
-            hours += 8
         else:
             worksheet.write(first_row + x, 5, 'OFF', small_text)
 
@@ -133,8 +145,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
                 worksheet.write(first_row + x, 6, fri_shifts[fri_ctr], silver_bg)
             else:
                 worksheet.write(first_row + x, 6, fri_shifts[fri_ctr], small_text)
+            if fri_shifts[fri_ctr] == '7-4 1130-130':
+                hours += 7
+            else:
+                hours += 8
             fri_ctr += 1
-            hours += 8
         else:
             worksheet.write(first_row + x, 6, 'OFF', small_text)
 
@@ -197,5 +212,9 @@ def act_template(month_str, day_str, total_weeks, msg):
             month_str = str(month)
             day_str = str(day)
 
-    worksheet.merge_range('A31:H31', msg, merge_format)
+    if total_weeks > 4:
+        worksheet.merge_range('A38:H39', msg, merge_format)
+    else:
+        worksheet.merge_range('A31:H32', msg, merge_format)
+
     workbook.close()

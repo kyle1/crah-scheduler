@@ -17,11 +17,11 @@ receps = [x.strip() for x in line.split(',')]
 workbook = xlsxwriter.Workbook('recep_schedule.xlsx')
 worksheet = workbook.add_worksheet('Receptionists')
 worksheet.set_landscape()
-worksheet.set_default_row(10.5)
-border = workbook.add_format({'font_size': 8, 'border': 1})
-fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
-merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+worksheet.set_default_row(11)
+border = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'border': 1})
+fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
+merge_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
+silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'silver'})
 
 # Generate full week
 def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
@@ -122,6 +122,9 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
     hours = [35, 0, 0, 0, 0, 0, 0, 0]
 
     # Haley, Carlos, Jenna G, Megan, Sydney
+    tech_helpers = [2, 3, 4]
+    tech_helpers = random.sample(tech_helpers, len(tech_helpers))
+
     for x in range(1, 6):
         # Monday
         if x != mon_half:
@@ -192,7 +195,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
 
 # Set up schedule template
 def recep_template(month_str, day_str, total_weeks, msg):
-    worksheet.set_column('B:G', 15.5)
+    worksheet.set_column('B:G', 16.5)
     worksheet.set_column('H:H', 5)
     column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Hours']
     for x in range(7):
@@ -241,7 +244,7 @@ def recep_template(month_str, day_str, total_weeks, msg):
             day_str = str(day)
 
     if total_weeks > 4:
-        worksheet.set_margins(left=0.75, right=0.75, top=0.6, bottom=0.4)
+        worksheet.set_margins(left=0.75, right=0.75, top=0.4, bottom=0.4)
         worksheet.merge_range('A49:H50', msg, merge_format)
     else:
         worksheet.merge_range('A40:H41', msg, merge_format)
