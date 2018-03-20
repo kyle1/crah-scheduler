@@ -3,12 +3,12 @@ import random
 import linecache
 
 # Shifts for each work day
-mon_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-tue_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-wed_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-thu_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-fri_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-sat_shifts = ['B8-CL', '745-12', '8-12', '8-CL']
+mon_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
+tue_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
+wed_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
+thu_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
+fri_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
+sat_shifts = [' B8-CL', ' 745-12', ' 8-12', ' 8-CL']
 
 # Read employee names from file
 line = linecache.getline('employees.txt', 5)
@@ -19,18 +19,31 @@ worksheet = workbook.add_worksheet('Receptionists')
 worksheet.set_landscape()
 worksheet.set_default_row(11)
 
-'''
-Bold Times New Roman formatting
+# Bold Times New Roman formatting
 border = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'border': 1})
+border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
-merge_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'silver'})
+fill.set_align('vcenter')
+msg_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
+silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
+                                 'bold': 1, 'bg_color': '#3399FF', 'border': 1})
+silver_bg.set_align('vcenter')
+
+'''
+Calibri
+border = workbook.add_format({'font_size': 8, 'border': 1})
+border.set_align('vcenter')
+fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
+msg_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
+silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+silver_bg.set_align('vcenter')
 '''
 
-border = workbook.add_format({'font_size': 8, 'border': 1})
-fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
-merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+mon_helpers = [-1] * 5
+tue_helpers = [-1] * 5
+wed_helpers = [-1] * 5
+thu_helpers = [-1] * 5
+fri_helpers = [-1] * 5
 
 
 # Generate full week
@@ -120,13 +133,13 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
     first_row = (num * (len(receps)+1)) - (len(receps)-1)
     for x in range(8):
         # Receptionist names
-        worksheet.write(first_row+x, 0, receps[x], border)
+        worksheet.write(first_row+x, 0, ' ' + receps[x], border)
 
     # Darcy
     for x in range(1, 6):
-        worksheet.write(first_row, x, '715-245 10-1030', border)
+        worksheet.write(first_row, x, ' 715-245 10-1030', border)
 
-    worksheet.write(first_row, 6, 'OFF', border)
+    worksheet.write(first_row, 6, ' OFF', border)
     worksheet.write(first_row, 7, '35', border)
 
     hours = [35, 0, 0, 0, 0, 0, 0, 0]
@@ -152,67 +165,67 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Monday
         if x != mon_half:
             if x == mon_helper:
-                worksheet.write(first_row + x, 1, '830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 1, ' 830-530 1-2', silver_bg)
             else:
                 worksheet.write(first_row + x, 1, mon_shifts[i], border)
                 i += 1
             hours[x] = 8
         else:
-            worksheet.write(first_row + x, 1, '2-CL', border)
+            worksheet.write(first_row + x, 1, ' 2-CL', border)
             hours[x] = 4
 
         # Tuesday
         if x != tue_half:
             if x == tue_helper:
-                worksheet.write(first_row + x, 2, '830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 2, ' 830-530 1-2', silver_bg)
             else:
                 worksheet.write(first_row + x, 2, tue_shifts[j], border)
                 j += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row + x, 2, '2-CL', border)
+            worksheet.write(first_row + x, 2, ' 2-CL', border)
             hours[x] += 4
 
         # Wednesday
         if x != wed_half:
             if x == wed_helper:
-                worksheet.write(first_row + x, 3, '830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 3, ' 830-530 1-2', silver_bg)
             else:
                 worksheet.write(first_row + x, 3, wed_shifts[k], border)
                 k += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row + x, 3, '2-CL', border)
+            worksheet.write(first_row + x, 3, ' 2-CL', border)
             hours[x] += 4
 
         # Thursday
         if x != thu_half:
             if x == thu_helper:
-                worksheet.write(first_row + x, 4, '830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 4, ' 830-530 1-2', silver_bg)
             else:
                 worksheet.write(first_row + x, 4, thu_shifts[m], border)
                 m += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row+x, 4, '2-CL', border)
+            worksheet.write(first_row+x, 4, ' 2-CL', border)
             hours[x] += 4
 
         # Friday
         if x != fri_half:
             if x == fri_helper:
-                worksheet.write(first_row + x, 5, '830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 5, ' 830-530 1-2', silver_bg)
             else:
                 worksheet.write(first_row + x, 5, fri_shifts[n], border)
                 n += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row+x, 5, '2-CL', border)
+            worksheet.write(first_row+x, 5, ' 2-CL', border)
             hours[x] += 4
 
     # Gloria and Blanca (OFF during week)
     for x in range(6, 8):
         for j in range(1, 6):
-            worksheet.write(first_row+x, j, 'OFF', border)
+            worksheet.write(first_row+x, j, ' OFF', border)
 
     for x in range(1, 8):
         if x == sat_worker or x == sat_worker2 or x == sat_worker3 or x == sat_worker4:
@@ -224,18 +237,27 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 hours[x] += 4.3
             p += 1
         else:
-            worksheet.write(first_row+x, 6, 'OFF', border)
+            worksheet.write(first_row+x, 6, ' OFF', border)
 
     # Hours
     for x in range(8):
-        worksheet.write(first_row+x, 7, hours[x], border)
+        str_hours = str(hours[x])
+        worksheet.write(first_row + x, 7, ' ' + str_hours, border)
+
+    # Set up list of tech helpers to use when generating tech schedule
+    mon_helpers[num-1] = receps[mon_helper]
+    tue_helpers[num-1] = receps[tue_helper]
+    wed_helpers[num-1] = receps[wed_helper]
+    thu_helpers[num-1] = receps[thu_helper]
+    fri_helpers[num-1] = receps[fri_helper]
 
 
 # Set up schedule template
 def recep_template(month_str, day_str, total_weeks, msg):
-    worksheet.set_column('B:G', 16.5)
+    worksheet.set_column('B:G', 17)
     worksheet.set_column('H:H', 5)
-    column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Hours']
+    column_headers = [' Monday', ' Tuesday', ' Wednesday', ' Thursday', ' Friday', ' Saturday', ' Hours']
+    worksheet.set_row(0, 15)
     for x in range(7):
         worksheet.write(0, x + 1, column_headers[x], border)
 
@@ -257,7 +279,7 @@ def recep_template(month_str, day_str, total_weeks, msg):
         for j in range(6):
             worksheet.write_blank(9*i+1, 0, None, fill)
             worksheet.write_blank(9*i+1, 7, None, fill)
-            worksheet.write(9*i+1, j+1, month_str + '/' + day_str, fill)
+            worksheet.write(9*i+1, j+1, ' ' + month_str + '/' + day_str, fill)
             month = int(month_str)
             day = int(day_str)
             if day == month_end:
@@ -282,9 +304,9 @@ def recep_template(month_str, day_str, total_weeks, msg):
             day_str = str(day)
 
     if total_weeks > 4:
-        worksheet.set_margins(left=0.75, right=0.75, top=0.4, bottom=0.4)
-        worksheet.merge_range('A49:H50', msg, merge_format)
+        worksheet.set_margins(left=0.75, right=0.5, top=0.25, bottom=0.4)
+        worksheet.merge_range('A49:H50', msg, msg_format)
     else:
-        worksheet.merge_range('A40:H41', msg, merge_format)
+        worksheet.merge_range('A40:H41', msg, msg_format)
 
     workbook.close()

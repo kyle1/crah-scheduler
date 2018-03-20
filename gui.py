@@ -85,9 +85,6 @@ class ActMain(tk.Frame):
         sat_acts = [[] for _ in range(5)]
         sun_acts = [[] for _ in range(5)]
         tk.Label(self, text="Select which ACTS to work on the following days:").pack(pady=20)
-        #tk.Label(self, text="------Sunday------").place(x=117, y=235)
-        #tk.Label(self, text="----------Saturday----------").place(x=325, y=235)
-
         tk.Label(self, text="Sunday").place(x=150, y=392)
         tk.Label(self, text="Saturday").place(x=376, y=392)
 
@@ -119,12 +116,12 @@ class ActMain(tk.Frame):
             month_str = sdate.get()[:2]
             day_str = sdate.get()[3:]
             try:
-                val = int(month_str)
+                int(month_str)
             except ValueError:
                 messagebox.showerror("Error", "Invalid date input. Please use MM/DD")
                 return
             try:
-                val2 = int(day_str)
+                int(day_str)
             except ValueError:
                 messagebox.showerror("Error", "Invalid date input. Please use MM/DD")
                 return

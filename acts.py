@@ -3,13 +3,13 @@ import random
 import linecache
 
 # Shifts for each work day
-mon_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130']
-tue_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130']
-wed_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130']
-thu_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130']
-fri_shifts = ['7-4 1130-1230 PR', '7-4 1130-130', '830-530 12-130 PR', '830-530 12-130']
-sat_shifts = ['730-430 12-1 PR', '730-430 12-1', '8-5 12-2']
-sun_shifts = ['8-5 12-1 PR', '8-5 12-1']
+mon_shifts = [' 7-4 1130-1230 PR', ' 7-4 1130-130', ' 830-530 12-130 PR', ' 830-530 12-130']
+tue_shifts = [' 7-4 1130-1230 PR', ' 7-4 1130-130', ' 830-530 12-130 PR', ' 830-530 12-130']
+wed_shifts = [' 7-4 1130-1230 PR', ' 7-4 1130-130', ' 830-530 12-130 PR', ' 830-530 12-130']
+thu_shifts = [' 7-4 1130-1230 PR', ' 7-4 1130-130', ' 830-530 12-130 PR', ' 830-530 12-130']
+fri_shifts = [' 7-4 1130-1230 PR', ' 7-4 1130-130', ' 830-530 12-130 PR', ' 830-530 12-130']
+sat_shifts = [' 730-430 12-1 PR', ' 730-430 12-1', ' 8-5 12-2']
+sun_shifts = [' 8-5 12-1 PR', ' 8-5 12-1']
 
 # Read employee names from file
 line = linecache.getline('employees.txt', 2)
@@ -23,24 +23,33 @@ worksheet.set_default_row(12)
 '''
 Bold Times New Roman formatting
 border = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'border': 1})
+border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
-merge_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'silver'})
+fill.set_align('vcenter')
+msg_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
+silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
+                                'bold': 1, 'bg_color': 'silver', 'border': 1})
+silver_bg.set_align('vcenter')
 '''
 
 border = workbook.add_format({'border': 1})
+border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
+fill.set_align('vcenter')
 small_text = workbook.add_format({'font_size': 8, 'border': 1})
-merge_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
+msg_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
 silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+silver_bg.set_align('vcenter')
+
+mon_assistants = [-1] * 5
+tue_assistants = [-1] * 5
+wed_assistants = [-1] * 5
+thu_assistants = [-1] * 5
+fri_assistants = [-1] * 5
 
 
 # Generate full week
 def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3):
-    # 1 ACT off/off
-    # 3 ACTs work/off
-    # 2 ACTS off/work
-
     for x in range(6):
         if sun_worker == acts[x]:
             sun_worker = x
@@ -96,11 +105,11 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
         hours = 0
 
         # ACT names
-        worksheet.write(first_row+x, 0, acts[x], small_text)
+        worksheet.write(first_row + x, 0, ' ' + acts[x], small_text)
 
         # Sunday
         if x != sun_worker and x != sun_worker2:
-            worksheet.write(first_row + x, 1, 'OFF', small_text)
+            worksheet.write(first_row + x, 1, ' OFF', small_text)
         else:
             worksheet.write(first_row + x, 1, sun_shifts[sun_ctr], small_text)
             sun_ctr += 1
@@ -109,91 +118,99 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
         # Monday
         if x != mon_off:
             if x == mon_asst:
-                worksheet.write(first_row + x, 2, '9-CL 130-230 TECH', silver_bg)
+                worksheet.write(first_row + x, 2, ' 9-CL 130-230 TECH', silver_bg)
                 hours += 8
             else:
                 worksheet.write(first_row + x, 2, mon_shifts[mon_ctr], small_text)
-                if mon_shifts[mon_ctr] == '7-4 1130-130':
+                if mon_shifts[mon_ctr] == ' 7-4 1130-130':
                     hours += 7
                 else:
                     hours += 8
                 mon_ctr += 1
         else:
-            worksheet.write(first_row + x, 2, 'OFF', small_text)
+            worksheet.write(first_row + x, 2, ' OFF', small_text)
 
         # Tuesday
         if x != tue_off:
             if x == tue_asst:
-                worksheet.write(first_row + x, 3, '9-CL 130-230 TECH', silver_bg)
+                worksheet.write(first_row + x, 3, ' 9-CL 130-230 TECH', silver_bg)
                 hours += 8
             else:
                 worksheet.write(first_row + x, 3, tue_shifts[tue_ctr], small_text)
-                if tue_shifts[tue_ctr] == '7-4 1130-130':
+                if tue_shifts[tue_ctr] == ' 7-4 1130-130':
                     hours += 7
                 else:
                     hours += 8
                 tue_ctr += 1
         else:
-            worksheet.write(first_row + x, 3, 'OFF', small_text)
+            worksheet.write(first_row + x, 3, ' OFF', small_text)
 
         # Wednesday
         if x != wed_off:
             if x == wed_asst:
-                worksheet.write(first_row + x, 4, '9-CL 130-230 TECH', silver_bg)
+                worksheet.write(first_row + x, 4, ' 9-CL 130-230 TECH', silver_bg)
                 hours += 8
             else:
                 worksheet.write(first_row + x, 4, wed_shifts[wed_ctr], small_text)
-                if wed_shifts[wed_ctr] == '7-4 1130-130':
+                if wed_shifts[wed_ctr] == ' 7-4 1130-130':
                     hours += 7
                 else:
                     hours += 8
                 wed_ctr += 1
         else:
-            worksheet.write(first_row + x, 4, 'OFF', small_text)
+            worksheet.write(first_row + x, 4, ' OFF', small_text)
 
         # Thursday
         if x != thu_off:
             if x == thu_asst:
-                worksheet.write(first_row + x, 5, '9-CL 130-230 TECH', silver_bg)
+                worksheet.write(first_row + x, 5, ' 9-CL 130-230 TECH', silver_bg)
                 hours += 8
             else:
                 worksheet.write(first_row + x, 5, thu_shifts[thu_ctr], small_text)
-                if thu_shifts[thu_ctr] == '7-4 1130-130':
+                if thu_shifts[thu_ctr] == ' 7-4 1130-130':
                     hours += 7
                 else:
                     hours += 8
                 thu_ctr += 1
         else:
-            worksheet.write(first_row + x, 5, 'OFF', small_text)
+            worksheet.write(first_row + x, 5, ' OFF', small_text)
 
         # Friday
         if x != fri_off:
             if x == fri_asst:
-                worksheet.write(first_row + x, 6, '9-CL 130-230 TECH', silver_bg)
+                worksheet.write(first_row + x, 6, ' 9-CL 130-230 TECH', silver_bg)
                 hours += 8
             else:
                 worksheet.write(first_row + x, 6, fri_shifts[fri_ctr], small_text)
-                if fri_shifts[fri_ctr] == '7-4 1130-130':
+                if fri_shifts[fri_ctr] == ' 7-4 1130-130':
                     hours += 7
                 else:
                     hours += 8
                 fri_ctr += 1
         else:
-            worksheet.write(first_row + x, 6, 'OFF', small_text)
+            worksheet.write(first_row + x, 6, ' OFF', small_text)
 
         # Saturday
         if x != sat_worker and x != sat_worker2 and x != sat_worker3:
-            worksheet.write(first_row + x, 7, 'OFF', small_text)
+            worksheet.write(first_row + x, 7, ' OFF', small_text)
         else:
             worksheet.write(first_row + x, 7, sat_shifts[sat_ctr], small_text)
-            if sat_shifts[sat_ctr] == '8-5 12-2':
+            if sat_shifts[sat_ctr] == ' 8-5 12-2':
                 hours += 7
             else:
                 hours += 8
             sat_ctr += 1
 
         # Hours
-        worksheet.write(first_row + x, 8, hours, small_text)
+        str_hours = str(hours)
+        worksheet.write(first_row + x, 8, ' ' + str_hours, small_text)
+
+        # Set up list of tech assistants to use when generating tech schedule
+        mon_assistants[num-1] = acts[mon_asst]
+        tue_assistants[num-1] = acts[tue_asst]
+        wed_assistants[num-1] = acts[wed_asst]
+        thu_assistants[num-1] = acts[thu_asst]
+        fri_assistants[num-1] = acts[fri_asst]
 
 
 # Set up schedule template
@@ -203,8 +220,9 @@ def act_template(month_str, day_str, total_weeks, msg):
     worksheet.set_column('C:G', 14)
     worksheet.set_column('H:H', 12)
     worksheet.set_column('I:I', 5)
-    column_headers = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday',
-                      'Friday', 'Saturday', 'Hours']
+    column_headers = [' Sunday', ' Monday', ' Tuesday', ' Wednesday', ' Thursday',
+                      ' Friday', ' Saturday', ' Hours']
+    worksheet.set_row(0, 15)
     for x in range(8):
         worksheet.write(0, x+1, column_headers[x], small_text)
 
@@ -226,7 +244,7 @@ def act_template(month_str, day_str, total_weeks, msg):
         for j in range(7):
             worksheet.write_blank((len(acts)+1)*i+1, 0, None, fill)
             worksheet.write_blank((len(acts)+1)*i+1, 8, None, fill)
-            worksheet.write((len(acts)+1)*i+1, j+1, month_str + '/' + day_str, fill)
+            worksheet.write((len(acts)+1)*i+1, j+1, ' ' + month_str + '/' + day_str, fill)
             month = int(month_str)
             day = int(day_str)
             if day == month_end:
@@ -241,8 +259,8 @@ def act_template(month_str, day_str, total_weeks, msg):
             day_str = str(day)
 
     if total_weeks > 4:
-        worksheet.merge_range('A38:H39', msg, merge_format)
+        worksheet.merge_range('A38:H39', msg, msg_format)
     else:
-        worksheet.merge_range('A31:H32', msg, merge_format)
+        worksheet.merge_range('A31:H32', msg, msg_format)
 
     workbook.close()
