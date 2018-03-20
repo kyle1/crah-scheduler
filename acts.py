@@ -38,7 +38,7 @@ fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 fill.set_align('vcenter')
 small_text = workbook.add_format({'font_size': 8, 'border': 1})
 msg_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver', 'border': 1})
 silver_bg.set_align('vcenter')
 
 mon_assistants = [-1] * 5
@@ -216,9 +216,9 @@ def act_week(num, sun_worker, sun_worker2, sat_worker, sat_worker2, sat_worker3)
 # Set up schedule template
 def act_template(month_str, day_str, total_weeks, msg):
     worksheet.set_column('A:A', 6.5)
-    worksheet.set_column('B:B', 12)
-    worksheet.set_column('C:G', 14)
-    worksheet.set_column('H:H', 12)
+    worksheet.set_column('B:B', 12.5)
+    worksheet.set_column('C:G', 15)
+    worksheet.set_column('H:H', 12.5)
     worksheet.set_column('I:I', 5)
     column_headers = [' Sunday', ' Monday', ' Tuesday', ' Wednesday', ' Thursday',
                       ' Friday', ' Saturday', ' Hours']

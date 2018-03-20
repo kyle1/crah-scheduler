@@ -2,14 +2,6 @@ import xlsxwriter
 import random
 import linecache
 
-# Shifts for each work day
-mon_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-tue_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-wed_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-thu_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-fri_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 9-CL 130-230'] # 830-530 1-2, 130/2-CL, 715-245 10-1030
-sat_shifts = [' B8-CL', ' 745-12', ' 8-12', ' 8-CL']
-
 # Read employee names from file
 line = linecache.getline('employees.txt', 5)
 receps = [x.strip() for x in line.split(',')]
@@ -25,9 +17,9 @@ border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
 fill.set_align('vcenter')
 msg_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
-                                 'bold': 1, 'bg_color': '#3399FF', 'border': 1})
-silver_bg.set_align('vcenter')
+blue_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
+                              'bold': 1, 'bg_color': '#3399FF', 'border': 1})
+blue_bg.set_align('vcenter')
 
 '''
 Calibri
@@ -35,8 +27,8 @@ border = workbook.add_format({'font_size': 8, 'border': 1})
 border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 msg_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
-silver_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
-silver_bg.set_align('vcenter')
+blue_bg = workbook.add_format({'font_size': 8, 'bg_color': 'silver'})
+blue_bg.set_align('vcenter')
 '''
 
 mon_helpers = [-1] * 5
@@ -48,6 +40,28 @@ fri_helpers = [-1] * 5
 
 # Generate full week
 def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
+    # Shifts for each work day
+    mon_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    tue_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    wed_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    thu_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    fri_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    sat_shifts = [' B8-CL', ' 745-12', ' 8-12', ' 8-CL']
+
+    # Choose random hospital shift to be the tech-helper shift
+    # Remove the chosen shift from the list of shifts above and store it separately so it does not get assigned twice
+    helper_shiftlist = [' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    mon_helpershift = random.choice(helper_shiftlist)
+    mon_shifts.remove(mon_helpershift)
+    tue_helpershift = random.choice(helper_shiftlist)
+    tue_shifts.remove(tue_helpershift)
+    wed_helpershift = random.choice(helper_shiftlist)
+    wed_shifts.remove(wed_helpershift)
+    thu_helpershift = random.choice(helper_shiftlist)
+    thu_shifts.remove(thu_helpershift)
+    fri_helpershift = random.choice(helper_shiftlist)
+    fri_shifts.remove(fri_helpershift)
+
     for x in range(8):
         if sat_worker == receps[x]:
             sat_worker = x
@@ -165,7 +179,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Monday
         if x != mon_half:
             if x == mon_helper:
-                worksheet.write(first_row + x, 1, ' 830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 1, mon_helpershift, blue_bg)
             else:
                 worksheet.write(first_row + x, 1, mon_shifts[i], border)
                 i += 1
@@ -177,7 +191,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Tuesday
         if x != tue_half:
             if x == tue_helper:
-                worksheet.write(first_row + x, 2, ' 830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 2, tue_helpershift, blue_bg)
             else:
                 worksheet.write(first_row + x, 2, tue_shifts[j], border)
                 j += 1
@@ -189,7 +203,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Wednesday
         if x != wed_half:
             if x == wed_helper:
-                worksheet.write(first_row + x, 3, ' 830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 3, wed_helpershift, blue_bg)
             else:
                 worksheet.write(first_row + x, 3, wed_shifts[k], border)
                 k += 1
@@ -201,7 +215,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Thursday
         if x != thu_half:
             if x == thu_helper:
-                worksheet.write(first_row + x, 4, ' 830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 4, thu_helpershift, blue_bg)
             else:
                 worksheet.write(first_row + x, 4, thu_shifts[m], border)
                 m += 1
@@ -213,7 +227,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
         # Friday
         if x != fri_half:
             if x == fri_helper:
-                worksheet.write(first_row + x, 5, ' 830-530 1-2', silver_bg)
+                worksheet.write(first_row + x, 5, fri_helpershift, blue_bg)
             else:
                 worksheet.write(first_row + x, 5, fri_shifts[n], border)
                 n += 1
