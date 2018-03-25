@@ -4,13 +4,6 @@ import linecache
 from acts import *
 from receptionists import *
 
-# Shifts for each work day
-mon_shifts = [' 7:30-5 SX', ' 8-5:30 CH', ' 8-5:30 JM', ' 8-5:30 SP']
-tue_shifts = [' 7:30-5 SX', ' 8-5:30 CH', ' 8-5:30 LM', ' 8-5:30 SP']
-wed_shifts = [' 8-5:30 JM', ' 8-5:30 LM', ' 8-5:30 SP']  # 7:30-11:30 SX
-thu_shifts = [' 7:30-5 SX', ' 8-5:30 CH', ' 8-5:30 JM']  # 8-11:30 LM
-fri_shifts = [' 7:30-5 SX', ' 8-5:30 CH', ' 8-5:30 JM', ' 8-5:30 SP']
-
 # Read employee names from file
 line = linecache.getline('employees.txt', 8)
 techs = [x.strip() for x in line.split(',')]
@@ -35,27 +28,106 @@ fill = workbook.add_format({'font_size': 8, 'bg_color': 'gray', 'border': 1})
 fill.set_align('vcenter')
 msg_format = workbook.add_format({'font_size': 16, 'bold': 1, 'align': 'center'})
 
-
 # Generate full week
 def tech_week(num, sat_worker, sat_worker2):
+    # Set hours to zero before starting running total
+    tech_hours = [0] * len(techs)
+
+    # Read in shifts to be assigned
+    f = open("config/techs/mon_shifts.txt", "r")
+    shifts = f.readline()
+    mon_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    mon_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+
+    f = open("config/techs/tue_shifts.txt", "r")
+    shifts = f.readline()
+    tue_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    tue_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+
+    f = open("config/techs/wed_shifts.txt", "r")
+    shifts = f.readline()
+    wed_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    wed_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+
+    adjust = 0
+    for i in range(len(wed_shifts)):
+        if wed_hours[i-adjust] <= 5.0:
+            wed_half = wed_shifts[i]
+            wed_half_hours = wed_hours[i]
+            wed_shifts.remove(wed_shifts[i])
+            wed_hours.remove(wed_hours[i])
+            adjust += 1
+
+    f = open("config/techs/thu_shifts.txt", "r")
+    shifts = f.readline()
+    thu_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    thu_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+    for i in range(len(thu_shifts)):
+        if thu_hours[i] <= 5:
+            thu_half = thu_shifts[i]
+            thu_half_hours = thu_hours[i]
+            thu_shifts.remove(thu_shifts[i])
+            thu_hours.remove(thu_hours[i])
+
+    f = open("config/techs/fri_shifts.txt", "r")
+    shifts = f.readline()
+    fri_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    fri_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+
+    f = open("config/techs/sat_shifts.txt", "r")
+    shifts = f.readline()
+    sat_shifts = [x.strip() for x in shifts.split(',')]
+    hours = f.readline()
+    sat_hours = [float(x.strip()) for x in hours.split(',')]
+    f.close()
+
     for x in range(4):
         if sat_worker == techs[x]:
             sat_worker = x
         if sat_worker2 == techs[x]:
             sat_worker2 = x
 
-    random.shuffle(mon_shifts)
-    random.shuffle(tue_shifts)
-    random.shuffle(wed_shifts)
-    random.shuffle(thu_shifts)
-    random.shuffle(fri_shifts)
+    # Shuffle shifts for random assignments
+    combo = list(zip(mon_shifts, mon_hours))
+    random.shuffle(combo)
+    mon_shifts, mon_hours = zip(*combo)
+
+    combo = list(zip(tue_shifts, tue_hours))
+    random.shuffle(combo)
+    tue_shifts, tue_hours = zip(*combo)
+
+    combo = list(zip(wed_shifts, wed_hours))
+    random.shuffle(combo)
+    wed_shifts, wed_hours = zip(*combo)
+
+    combo = list(zip(thu_shifts, thu_hours))
+    random.shuffle(combo)
+    thu_shifts, thu_hours = zip(*combo)
+
+    combo = list(zip(fri_shifts, fri_hours))
+    random.shuffle(combo)
+    fri_shifts, fri_hours = zip(*combo)
+
+    # combo = list(zip(sat_shifts, sat_hours))
+    # random.shuffle(combo)
+    # sat_shifts, sat_hours = zip(*combo)
 
     sat_list = [sat_worker, sat_worker2]
     random.shuffle(sat_list)
-    wed_half = sat_list[0]
-    thu_half = sat_list[1]
+    wed_half_tech = sat_list[0]
+    thu_half_tech = sat_list[1]
 
-    i, j = 0, 0
+    i, j, k = 0, 0, 0
     first_row = (num * (len(techs)+2)) - (len(techs))
     for x in range(4):
         # Vet tech names
@@ -63,37 +135,55 @@ def tech_week(num, sat_worker, sat_worker2):
 
         # Monday
         worksheet.write(first_row + x, 1, mon_shifts[x], border)
+        tech_hours[x] += mon_hours[x]
 
         # Tuesday
         worksheet.write(first_row + x, 2, tue_shifts[x], border)
+        tech_hours[x] += tue_hours[x]
 
         # Wednesday
-        if x != wed_half:
+        if x != wed_half_tech:
             worksheet.write(first_row + x, 3, wed_shifts[i], border)
+            tech_hours[x] += wed_hours[i]
             i += 1
         else:
-            worksheet.write(first_row + x, 3, ' 7:30-11:30 SX', border)
+            worksheet.write(first_row + x, 3, wed_half, border)
+            tech_hours[x] += wed_half_hours
 
         # Thursday
-        if x != thu_half:
+        if x != thu_half_tech:
             worksheet.write(first_row + x, 4, thu_shifts[j], border)
+            tech_hours[x] += thu_hours[j]
             j += 1
         else:
-            worksheet.write(first_row + x, 4, ' 8-11:30 LM', border)
+            worksheet.write(first_row + x, 4, thu_half, border)
+            tech_hours[x] += thu_half_hours
 
         # Friday
         worksheet.write(first_row + x, 5, fri_shifts[x], border)
+        tech_hours[x] += fri_hours[x]
 
         # Saturday
-        if x == wed_half:
-            worksheet.write(first_row + x, 6, ' 8-12', border)
-        elif x == thu_half:
-            worksheet.write(first_row + x, 6, ' 7:30-12', border)
-        else:
+        if x != wed_half_tech and x != thu_half_tech:
             worksheet.write(first_row + x, 6, ' OFF', border)
 
-        # Hours
-        worksheet.write(first_row + x, 7, ' 40', border)
+    # Saturday continued
+    if tech_hours[wed_half_tech] < tech_hours[thu_half_tech]:
+        worksheet.write(first_row + wed_half_tech, 6, sat_shifts[0], border)
+        tech_hours[wed_half_tech] += sat_hours[0]
+        worksheet.write(first_row + thu_half_tech, 6, sat_shifts[1], border)
+        tech_hours[thu_half_tech] += sat_hours[1]
+    else:
+        worksheet.write(first_row + wed_half_tech, 6, sat_shifts[1], border)
+        tech_hours[wed_half_tech] += sat_hours[1]
+        worksheet.write(first_row + thu_half_tech, 6, sat_shifts[0], border)
+        tech_hours[thu_half_tech] += sat_hours[0]
+
+
+    # Hours
+    for x in range(4):
+        worksheet.write(first_row + x, 7, tech_hours[x], border)
+
 
     worksheet.write(first_row + 4, 0, ' Floater', border)
 

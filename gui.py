@@ -8,6 +8,7 @@ from PIL import ImageTk
 from techs import *
 from acts import *
 from receptionists import *
+import linecache
 
 
 class ScheduleBuilder(tk.Tk):
@@ -24,7 +25,11 @@ class ScheduleBuilder(tk.Tk):
         container.grid_columnconfigure(0, weight=1)
 
         self.frames = {}
-        for F in (StartPage, ActMain, RecepMain, TechMain):
+        tech_pages = [TechMain, TechSettings, TechMon, TechWed, TechThu, TechSat]
+        other_pages = [StartPage, ActMain, RecepMain, ActSettings, RecepSettings]
+        pages = tech_pages + other_pages
+        #for F in (StartPage, ActMain, RecepMain, TechMain, ActSettings, RecepSettings, TechSettings):
+        for F in pages:
             page_name = F.__name__
             frame = F(parent=container, controller=self)
             self.frames[page_name] = frame
@@ -70,6 +75,7 @@ class ActMain(tk.Frame):
         self.controller = controller
         tk.Label(self, text="ACTs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
+        tk.Button(self, text='Settings', command=lambda: controller.show_frame("ActSettings")).place(x=460, y=10)
 
         tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
         sdate = Entry(self, width=12, justify='center')
@@ -105,6 +111,8 @@ class ActMain(tk.Frame):
         msg.insert(0, '')
 
         f = tkfont.Font(family='Calibri', size=14, weight='bold')
+        #tk.Button(self, text='Generate', font=f, background='CadetBlue3',
+        #          command=lambda: generate_acts()).pack(pady=(35, 0))
         tk.Button(self, text='Generate', font=f, background='CadetBlue3',
                   command=lambda: generate_acts()).pack(pady=(35, 0))
 
@@ -179,6 +187,7 @@ class RecepMain(tk.Frame):
         # f = tkfont.Font(family='Calibri', size=14, weight='bold')
         tk.Label(self, text="Receptionists", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
+        tk.Button(self, text='Settings', command=lambda: controller.show_frame("RecepSettings")).place(x=460, y=10)
 
         tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
         sdate = Entry(self, width=12, justify='center')
@@ -236,6 +245,7 @@ class TechMain(tk.Frame):
         self.controller = controller
         tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
         tk.Button(self, text="<<", command=lambda: controller.show_frame("StartPage")).place(x=10, y=10)
+        tk.Button(self, text='Settings', command=lambda: controller.show_frame("TechSettings")).place(x=460, y=10)
 
         tk.Label(self, text="Enter the beginning date of the new schedule").pack(pady=(10, 0))
         sdate = Entry(self, width=12, justify='center')
@@ -277,6 +287,235 @@ class TechMain(tk.Frame):
                     tech_week(x+1, sat_techs[x][0].get(), sat_techs[x][1].get())
             tech_template(month_str, day_str, int(wks.get()), msg.get())
             messagebox.showinfo("Success", "Vet tech schedule created!")
+
+
+class ActSettings(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="ACTs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("ActMain")).place(x=10, y=10)
+        tk.Label(self, text="Hello!!!").pack(pady=(10, 0))
+
+
+class RecepSettings(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Receptionists", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("RecepMain")).place(x=10, y=10)
+        tk.Label(self, text="Hello!!!").pack(pady=(10, 0))
+
+
+class TechSettings(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("TechMain")).place(x=10, y=10)
+        tk.Label(self, text="Settings").pack(pady=(10, 0))
+
+        tk.Label(self, text='Edit shifts:').place(x=50, y=120)
+        tk.Button(self, text='Monday', width=12, command=lambda: controller.show_frame('TechMon')).place(x=50, y=150)
+        tk.Button(self, text='Tuesday', width=12, command=lambda: controller.show_frame('TechMon')).place(x=50, y=180)
+        tk.Button(self, text='Wednesday', width=12, command=lambda: controller.show_frame('TechWed')).place(x=50, y=210)
+        tk.Button(self, text='Thursday', width=12, command=lambda: controller.show_frame('TechThu')).place(x=50, y=240)
+        tk.Button(self, text='Friday', width=12, command=lambda: controller.show_frame('TechMon')).place(x=50, y=270)
+        tk.Button(self, text='Saturday', width=12, command=lambda: controller.show_frame('TechSat')).place(x=50, y=300)
+
+        tk.Label(self, text='Employees:').place(x=340, y=120)
+
+
+class TechMon(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("TechSettings")).place(x=10, y=10)
+        tk.Label(self, text="Monday shifts").pack(pady=(10, 0))
+
+        # Read shifts from file
+        shifts = linecache.getline('config/techs/mon_shifts.txt', 1)
+        mon_tech_shifts = [x.strip() for x in shifts.split(',')]
+        hours = linecache.getline('config/techs/mon_shifts.txt', 2)
+        mon_tech_hours = [x.strip() for x in hours.split(',')]
+        mon_tech_shifts_e = ['blah', 'blah2', 'blah3', 'blah4', 'blah5', 'blah6']
+        mon_tech_hours_e = [0, 0, 0, 0, 0, 0]
+        tk.Label(self, text="Shifts").place(x=160, y=100)
+        tk.Label(self, text="Hours").place(x=330, y=100)
+        for i in range(len(mon_tech_shifts)):
+            mon_tech_shifts_e[i] = Entry(self, width=17)
+            mon_tech_shifts_e[i].place(x=160, y=120+(30*i))
+            mon_tech_shifts_e[i].delete(0, END)
+            mon_tech_shifts_e[i].insert(0, mon_tech_shifts[i])
+
+            mon_tech_hours_e[i] = Entry(self, width=4)
+            mon_tech_hours_e[i].place(x=330, y=120+(30*i))
+            mon_tech_hours_e[i].delete(0, END)
+            mon_tech_hours_e[i].insert(0, mon_tech_hours[i])
+
+        tk.Button(self, text="Save changes", command=lambda: save_tech_mon()).place(x=200, y=350)
+
+        def save_tech_mon():
+            f = open("config/techs/mon_shifts.txt", "w+")
+            for i in range(4):
+                if i < 3:
+                    f.write(mon_tech_shifts_e[i].get() + ", ")
+                else:
+                    f.write(mon_tech_shifts_e[i].get() + "\n")
+
+            for i in range(4):
+                if i < 3:
+                    f.write(mon_tech_hours_e[i].get() + ", ")
+                else:
+                    f.write(mon_tech_hours_e[i].get())
+            f.close()
+            messagebox.showinfo("Success", "Changes have been saved!")
+            controller.show_frame("TechSettings")
+
+class TechWed(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("TechSettings")).place(x=10, y=10)
+        tk.Label(self, text="Wednesday shifts").pack(pady=(10, 0))
+
+        # Read shifts from file
+        shifts = linecache.getline('config/techs/wed_shifts.txt', 1)
+        wed_tech_shifts = [x.strip() for x in shifts.split(',')]
+        hours = linecache.getline('config/techs/wed_shifts.txt', 2)
+        wed_tech_hours = [x.strip() for x in hours.split(',')]
+        wed_tech_shifts_e = ['blah', 'blah2', 'blah3', 'blah4', 'blah5', 'blah6']
+        wed_tech_hours_e = [0, 0, 0, 0, 0, 0]
+        tk.Label(self, text="Shifts").place(x=160, y=100)
+        tk.Label(self, text="Hours").place(x=330, y=100)
+        for i in range(len(wed_tech_shifts)):
+            wed_tech_shifts_e[i] = Entry(self, width=17)
+            wed_tech_shifts_e[i].place(x=160, y=120 + (30 * i))
+            wed_tech_shifts_e[i].delete(0, END)
+            wed_tech_shifts_e[i].insert(0, wed_tech_shifts[i])
+
+            wed_tech_hours_e[i] = Entry(self, width=4)
+            wed_tech_hours_e[i].place(x=330, y=120 + (30 * i))
+            wed_tech_hours_e[i].delete(0, END)
+            wed_tech_hours_e[i].insert(0, wed_tech_hours[i])
+
+        tk.Button(self, text="Save changes", command=lambda: save_tech_wed()).place(x=200, y=350)
+
+        def save_tech_wed():
+            f = open("config/techs/wed_shifts.txt", "w+")
+            for i in range(4):
+                if i < 3:
+                    f.write(wed_tech_shifts_e[i].get() + ", ")
+                else:
+                    f.write(wed_tech_shifts_e[i].get() + "\n")
+
+            for i in range(4):
+                if i < 3:
+                    f.write(wed_tech_hours_e[i].get() + ", ")
+                else:
+                    f.write(wed_tech_hours_e[i].get())
+            f.close()
+            messagebox.showinfo("Success", "Changes have been saved!")
+            controller.show_frame("TechSettings")
+
+
+class TechThu(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("TechSettings")).place(x=10, y=10)
+        tk.Label(self, text="Thursday shifts").pack(pady=(10, 0))
+
+        # Read shifts from file
+        shifts = linecache.getline('config/techs/thu_shifts.txt', 1)
+        thu_tech_shifts = [x.strip() for x in shifts.split(',')]
+        hours = linecache.getline('config/techs/thu_shifts.txt', 2)
+        thu_tech_hours = [x.strip() for x in hours.split(',')]
+        thu_tech_shifts_e = ['blah', 'blah2', 'blah3', 'blah4', 'blah5', 'blah6']
+        thu_tech_hours_e = [0, 0, 0, 0, 0, 0]
+        tk.Label(self, text="Shifts").place(x=160, y=100)
+        tk.Label(self, text="Hours").place(x=330, y=100)
+        for i in range(len(thu_tech_shifts)):
+            thu_tech_shifts_e[i] = Entry(self, width=17)
+            thu_tech_shifts_e[i].place(x=160, y=120 + (30 * i))
+            thu_tech_shifts_e[i].delete(0, END)
+            thu_tech_shifts_e[i].insert(0, thu_tech_shifts[i])
+
+            thu_tech_hours_e[i] = Entry(self, width=4)
+            thu_tech_hours_e[i].place(x=330, y=120 + (30 * i))
+            thu_tech_hours_e[i].delete(0, END)
+            thu_tech_hours_e[i].insert(0, thu_tech_hours[i])
+
+        tk.Button(self, text="Save changes", command=lambda: save_tech_thu()).place(x=200, y=350)
+
+        def save_tech_thu():
+            f = open("config/techs/thu_shifts.txt", "w+")
+            for i in range(4):
+                if i < 3:
+                    f.write(thu_tech_shifts_e[i].get() + ", ")
+                else:
+                    f.write(thu_tech_shifts_e[i].get() + "\n")
+
+            for i in range(4):
+                if i < 3:
+                    f.write(thu_tech_hours_e[i].get() + ", ")
+                else:
+                    f.write(thu_tech_hours_e[i].get())
+            f.close()
+            messagebox.showinfo("Success", "Changes have been saved!")
+            controller.show_frame("TechSettings")
+
+
+class TechSat(tk.Frame):
+    def __init__(self, parent, controller):
+        tk.Frame.__init__(self, parent)
+        self.controller = controller
+        tk.Label(self, text="Vet Techs", font=controller.title_font).pack(side="top", fill="x", pady=(10, 0))
+        tk.Button(self, text="<<", command=lambda: controller.show_frame("TechSettings")).place(x=10, y=10)
+        tk.Label(self, text="Saturday shifts").pack(pady=(10, 0))
+
+        # Read shifts from file
+        shifts = linecache.getline('config/techs/sat_shifts.txt', 1)
+        sat_tech_shifts = [x.strip() for x in shifts.split(',')]
+        hours = linecache.getline('config/techs/sat_shifts.txt', 2)
+        sat_tech_hours = [x.strip() for x in hours.split(',')]
+        sat_tech_shifts_e = ['blah', 'blah2', 'blah3', 'blah4', 'blah5', 'blah6']
+        sat_tech_hours_e = [0, 0, 0, 0, 0, 0]
+        tk.Label(self, text="Shifts").place(x=160, y=100)
+        tk.Label(self, text="Hours").place(x=330, y=100)
+        for i in range(len(sat_tech_shifts)):
+            sat_tech_shifts_e[i] = Entry(self, width=17)
+            sat_tech_shifts_e[i].place(x=160, y=120 + (30 * i))
+            sat_tech_shifts_e[i].delete(0, END)
+            sat_tech_shifts_e[i].insert(0, sat_tech_shifts[i])
+
+            sat_tech_hours_e[i] = Entry(self, width=4)
+            sat_tech_hours_e[i].place(x=330, y=120 + (30 * i))
+            sat_tech_hours_e[i].delete(0, END)
+            sat_tech_hours_e[i].insert(0, sat_tech_hours[i])
+
+        tk.Button(self, text="Save changes", command=lambda: save_tech_sat()).place(x=200, y=350)
+
+        def save_tech_sat():
+            f = open("config/techs/thu_shifts.txt", "w+")
+            for i in range(4):
+                if i < 3:
+                    f.write(sat_tech_shifts_e[i].get() + ", ")
+                else:
+                    f.write(sat_tech_shifts_e[i].get() + "\n")
+
+            for i in range(4):
+                if i < 3:
+                    f.write(sat_tech_hours_e[i].get() + ", ")
+                else:
+                    f.write(sat_tech_hours_e[i].get())
+            f.close()
+            messagebox.showinfo("Success", "Changes have been saved!")
+            controller.show_frame("TechSettings")
+
 
 # if __name__ == "__main__":
 app = ScheduleBuilder()
