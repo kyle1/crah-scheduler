@@ -4,7 +4,7 @@ This application automates most of the staff scheduling for all Coffee Road Anim
 
 ## Getting Started
 
-This code for this application can be downloaded using:
+This code for this application can be downloaded using the following command:
 
 ```
 git clone https://github.com/kyle/overstreet/crah-scheduler.git
@@ -12,13 +12,13 @@ git clone https://github.com/kyle/overstreet/crah-scheduler.git
 
 See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+## Prerequisites
 
-Python is required to run the application.
+Python must be installed to run the application.
 
 ## Deployment
 
-The program can be run by executing gui.py in the project directory
+This application can be run by executing gui.py in the project directory
 
 ## Built With
 
