@@ -16,9 +16,15 @@ border = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'b
 border.set_align('vcenter')
 fill = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman', 'bold': 1, 'bg_color': 'gray', 'border': 1})
 fill.set_align('vcenter')
+'''
 msg_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
 blue_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
                               'bold': 1, 'bg_color': '#3399FF', 'border': 1})
+'''
+msg_format = workbook.add_format({'font_size': 16, 'font_name': 'Times New Roman', 'bold': 1, 'align': 'center'})
+blue_bg = workbook.add_format({'font_size': 8, 'font_name': 'Times New Roman',
+                              'bold': 1, 'bg_color': '#3399FF', 'border': 1})
+
 blue_bg.set_align('vcenter')
 
 '''
