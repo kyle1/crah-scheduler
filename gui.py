@@ -39,11 +39,10 @@ class ScheduleBuilder(tk.Tk):
 
         self.show_frame("StartPage")
 
-    def show_frame(self, page_name):
+    def show_frame(self, page_name, arg=None):
         # Show a frame for the given page name
         frame = self.frames[page_name]
         frame.tkraise()
-
 
 class StartPage(tk.Frame):
     def __init__(self, parent, controller):
@@ -328,9 +327,10 @@ class TechSettings(tk.Frame):
         tk.Label(self, text='Employees:').place(x=300, y=125)
 
         def edit_employee(emp):
-            #set_employee = emp
+            global set_employee
+            set_employee = emp
+            print(set_employee)
             controller.show_frame('TechEmployee')
-            #print(set_employee)
 
         for i in range(len(techs)):
             tk.Button(self, text=techs[i], width=12,

@@ -47,16 +47,16 @@ fri_helpers = [-1] * 5
 # Generate full week
 def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
     # Shifts for each work day
-    mon_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
-    tue_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
-    wed_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
-    thu_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
-    fri_shifts = [' B730-430 1130-1230', ' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
-    sat_shifts = [' B8-CL', ' 745-12', ' 8-12', ' 8-CL']
+    mon_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
+    tue_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
+    wed_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
+    thu_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
+    fri_shifts = ['B730-430 1130-1230', '730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
+    sat_shifts = ['B8-CL', '745-12', '8-12', '8-CL']
 
     # Choose random hospital shift to be the tech-helper shift
     # Remove the chosen shift from the list of shifts above and store it separately so it does not get assigned twice
-    helper_shiftlist = [' 730-430 1130-1230', ' 830-530 1-2', ' 9-CL 130-230']
+    helper_shiftlist = ['730-430 1130-1230', '830-530 1-2', '9-CL 130-230']
     mon_helpershift = random.choice(helper_shiftlist)
     mon_shifts.remove(mon_helpershift)
     tue_helpershift = random.choice(helper_shiftlist)
@@ -153,13 +153,13 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
     first_row = (num * (len(receps)+1)) - (len(receps)-1)
     for x in range(8):
         # Receptionist names
-        worksheet.write(first_row+x, 0, ' ' + receps[x], border)
+        worksheet.write(first_row+x, 0, receps[x], border)
 
     # Darcy
     for x in range(1, 6):
-        worksheet.write(first_row, x, ' 715-245 10-1030', border)
+        worksheet.write(first_row, x, '715-245 10-1030', border)
 
-    worksheet.write(first_row, 6, ' OFF', border)
+    worksheet.write(first_row, 6, 'OFF', border)
     worksheet.write(first_row, 7, '35', border)
 
     hours = [35, 0, 0, 0, 0, 0, 0, 0]
@@ -191,7 +191,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 i += 1
             hours[x] = 8
         else:
-            worksheet.write(first_row + x, 1, ' 2-CL', border)
+            worksheet.write(first_row + x, 1, '2-CL', border)
             hours[x] = 4
 
         # Tuesday
@@ -203,7 +203,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 j += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row + x, 2, ' 2-CL', border)
+            worksheet.write(first_row + x, 2, '2-CL', border)
             hours[x] += 4
 
         # Wednesday
@@ -215,7 +215,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 k += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row + x, 3, ' 2-CL', border)
+            worksheet.write(first_row + x, 3, '2-CL', border)
             hours[x] += 4
 
         # Thursday
@@ -227,7 +227,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 m += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row+x, 4, ' 2-CL', border)
+            worksheet.write(first_row+x, 4, '2-CL', border)
             hours[x] += 4
 
         # Friday
@@ -239,13 +239,13 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 n += 1
             hours[x] += 8
         else:
-            worksheet.write(first_row+x, 5, ' 2-CL', border)
+            worksheet.write(first_row+x, 5, '2-CL', border)
             hours[x] += 4
 
     # Gloria and Blanca (OFF during week)
     for x in range(6, 8):
         for j in range(1, 6):
-            worksheet.write(first_row+x, j, ' OFF', border)
+            worksheet.write(first_row+x, j, 'OFF', border)
 
     for x in range(1, 8):
         if x == sat_worker or x == sat_worker2 or x == sat_worker3 or x == sat_worker4:
@@ -257,7 +257,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
                 hours[x] += 4.3
             p += 1
         else:
-            worksheet.write(first_row+x, 6, ' OFF', border)
+            worksheet.write(first_row+x, 6, 'OFF', border)
 
     # Hours
     for x in range(8):
@@ -276,7 +276,7 @@ def recep_week(num, sat_worker, sat_worker2, sat_worker3, sat_worker4):
 def recep_template(month_str, day_str, total_weeks, msg):
     worksheet.set_column('B:G', 17)
     worksheet.set_column('H:H', 5)
-    column_headers = [' Monday', ' Tuesday', ' Wednesday', ' Thursday', ' Friday', ' Saturday', ' Hours']
+    column_headers = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Hours']
     worksheet.set_row(0, 15)
     for x in range(7):
         worksheet.write(0, x + 1, column_headers[x], border)
@@ -299,7 +299,7 @@ def recep_template(month_str, day_str, total_weeks, msg):
         for j in range(6):
             worksheet.write_blank(9*i+1, 0, None, fill)
             worksheet.write_blank(9*i+1, 7, None, fill)
-            worksheet.write(9*i+1, j+1, ' ' + month_str + '/' + day_str, fill)
+            worksheet.write(9*i+1, j+1, month_str + '/' + day_str, fill)
             month = int(month_str)
             day = int(day_str)
             if day == month_end:

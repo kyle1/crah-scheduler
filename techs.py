@@ -165,7 +165,7 @@ def tech_week(num, sat_worker, sat_worker2):
 
         # Saturday
         if x != wed_half_tech and x != thu_half_tech:
-            worksheet.write(first_row + x, 6, ' OFF', border)
+            worksheet.write(first_row + x, 6, 'OFF', border)
 
     # Saturday continued
     if tech_hours[wed_half_tech] < tech_hours[thu_half_tech]:
