@@ -7,7 +7,7 @@ This application automates most of the employee scheduling for all Coffee Road A
 The code for this application can be downloaded using the following command:
 
 ```
-git clone https://github.com/kyleoverstreet/crah-scheduler.git
+git clone https://github.com/kyleoverstreet/crah-scheduler
 ```
 
 See deployment for notes on how to deploy the project on a live system.
