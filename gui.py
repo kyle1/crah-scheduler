@@ -48,7 +48,7 @@ class StartPage(tk.Frame):
     def __init__(self, parent, controller):
         tk.Frame.__init__(self, parent)
 
-        logo = ImageTk.PhotoImage(file="crah.png")
+        logo = ImageTk.PhotoImage(file="img/crah.png")
         p1 = Label(self, image=logo)
         p1.image = logo
         p1.pack(side="top", fill="x", pady=(30, 0))
