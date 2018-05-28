@@ -47,7 +47,7 @@ Once the settings have been properly configured, the schedule can be generated b
 
 ![Generating the Schedule](img/generate.png "Generating the Schedule")
 
-The generated schedules is output to an Excel worksheet. The formatting of the worksheet was designed to look nearly identical to the manually created schedules that the employees are used to seeing.
+The generated schedule is output to an Excel worksheet. The formatting of the worksheet was designed to look nearly identical to the manually created schedules that the employees are used to seeing.
 
 ![Vet Tech Schedule](img/tech_schedule.png "Vet Tech Schedule")
 
