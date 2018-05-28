@@ -2,7 +2,7 @@
 
 This application automates most of the employee scheduling for all Coffee Road Animal Hospital staff areas.
 
-![CRAH Schedule Builder](img/main.png "CRAH Scheduler Builder")
+![CRAH Schedule Builder](img/main.png "CRAH Schedule Builder")
 ## Getting Started
 
 The code for this application can be downloaded using the following command:
