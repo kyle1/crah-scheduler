@@ -26,7 +26,7 @@ Python must be installed to run the application.
 
 ## Deployment
 
-This application can be run by executing gui.py in the project directory
+This application can be run by executing main.py in the project directory
 
 ## How to Use
 
