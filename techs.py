@@ -5,7 +5,7 @@ from acts import *
 from receptionists import *
 
 # Read employee names from file
-line = linecache.getline('employees.txt', 8)
+line = linecache.getline('config/employees.txt', 8)
 techs = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('tech_schedule.xlsx')

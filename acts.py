@@ -12,7 +12,7 @@ sat_shifts = [' 730-430 12-1 PR', ' 730-430 12-1', ' 8-5 12-2']
 sun_shifts = [' 8-5 12-1 PR', ' 8-5 12-1']
 
 # Read employee names from file
-line = linecache.getline('employees.txt', 2)
+line = linecache.getline('config/employees.txt', 2)
 acts = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('act_schedule.xlsx')

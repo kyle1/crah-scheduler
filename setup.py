@@ -18,7 +18,7 @@ options = {
     },
 }
 
-exe = Executable(script="gui.py", targetName="crah-scheduler.exe", base="Win32GUI")
+exe = Executable(script="main.py", targetName="crah-scheduler.exe", base="Win32GUI")
 base = None
 setup( name = "crah-scheduler",
        version = "1.0",

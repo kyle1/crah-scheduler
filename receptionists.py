@@ -3,7 +3,7 @@ import random
 import linecache
 
 # Read employee names from file
-line = linecache.getline('employees.txt', 5)
+line = linecache.getline('config/employees.txt', 5)
 receps = [x.strip() for x in line.split(',')]
 
 workbook = xlsxwriter.Workbook('recep_schedule.xlsx')
