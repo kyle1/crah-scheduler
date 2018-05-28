@@ -8,9 +8,9 @@ This application automates most of the employee scheduling for all Coffee Road A
 
 This application automates most of the employee scheduling for all Coffee Road Animal Hospital staff areas.
 
-For several years, I did the employee scheduling for my staff area at CRAH. The process that went into creating the schedule was similar each month. Before learning to code, I thought to myself that there had to be a way to automate most of that process.
+For several years, I did the employee scheduling for the Animal Care Taker staff area at CRAH. The process that went into creating the schedule was similar each month. Before learning to code, I thought to myself that there was likely a way to automate most of that process.
 
-After learning to code, I decided to implement my idea into a program. Because I am familiar with scheduling needs for all staff areas, I created a program that can generate the schedule for each one. The program is currently used by CRAH and has been since March 2018.
+After learning to code, I decided to implement this idea into a program. Because I am familiar with scheduling needs for all staff areas, I created a program that can generate the schedule for each one. The program is currently used by CRAH and has been since March 2018.
 
 ## Getting Started
 
